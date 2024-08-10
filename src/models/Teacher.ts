@@ -16,6 +16,8 @@ export interface ITeacher extends Document {
     yearOfExperiencefrom ?: Date;
     yearOfExperienceTo ?: Date;
     Is_verified: boolean;
+    resetPasswordToken?:string | null;
+    resetPasswordExpires?:number |null
 }
 
 const TeacherSchema: Schema = new Schema({
@@ -33,7 +35,9 @@ const TeacherSchema: Schema = new Schema({
     ExperiencedInstitute: { type: String, required: false },
     yearOfExperiencefrom: { type: Date, required: false },
     yearOfExperienceTo: { type: Date, required: false },
-    Is_verified: { type: Boolean, default: false }
+    Is_verified: { type: Boolean, default: false },
+    resetPasswordToken: { type: String, required: false },
+    resetPasswordExpires: { type: Date, required: false },
 });
 
  const Teacher = mongoose.model<ITeacher>('Teacher', TeacherSchema);

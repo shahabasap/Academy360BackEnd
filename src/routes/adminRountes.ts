@@ -8,7 +8,13 @@ const router = Router();
 
 router.post('/createAdmin',autMiddleware.AdminAuthenticateToken,adminController.createAdmin)
 router.get('/teachers',autMiddleware.AdminAuthenticateToken, adminController.FetchTeachersDetails);
+router.put('/teacher-block/:id',autMiddleware.AdminAuthenticateToken, adminController.TeacherBlock);
+router.put('/teacher-unblock/:id',autMiddleware.AdminAuthenticateToken, adminController.TeacherUnblock);
+
+
 router.get('/students',autMiddleware.AdminAuthenticateToken, adminController.FetchStudentsDetails);
+router.put('/student-block/:id',autMiddleware.AdminAuthenticateToken, adminController.StudentBlock);
+router.put('/student-unblock/:id',autMiddleware.AdminAuthenticateToken, adminController.StudentUnblock);
 
 // Other routes...
 

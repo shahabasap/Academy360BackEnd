@@ -25,6 +25,20 @@ class authController{
       res.status(customError.status || 500).json({ error: customError.message });
     }
   }
+  async AdminLogout(req: Request, res: Response) {
+    try {
+      res.cookie('JwtAdmin','',{
+       httpOnly:true,
+       expires:new Date(0)
+      })
+      res.status(200).json({message:"admin Loged out"})
+       
+   } catch (error) {
+    const customError=error as CustomError
+    res.status(customError.status || 500).json({ error: customError.message });
+       
+   }
+  }
     // Teacher side Auth------------------------------
     async TeacherLogin(req: Request, res: Response) {
       try {
@@ -84,6 +98,43 @@ class authController{
       const customError=error as CustomError
       res.status(customError.status || 500).json({ error: customError.message });
     }
+  }
+
+  async TeacherLogout(req: Request, res: Response) {
+    try {
+      res.cookie('JwtTeacher','',{
+       httpOnly:true,
+       expires:new Date(0)
+      })
+      res.status(200).json({message:"teacher Loged out"})
+       
+   } catch (error) {
+    const customError=error as CustomError
+    res.status(customError.status || 500).json({ error: customError.message });
+       
+   }
+  }
+  async teacherForgotPassword(req: Request, res: Response) {
+    try {
+      const teacher=await AuthService.TeacherForgotpassword(req.body.username)
+      res.status(200).json("Reset email send")
+       
+   } catch (error) {
+    const customError=error as CustomError
+    res.status(customError.status || 500).json({ error: customError.message });
+       
+   }
+  }
+  async teacherResetPassword(req: Request, res: Response) {
+    try {
+      const teacher=await AuthService.TeacherResetPassword(req.body.token, req.body.newPassword)
+      res.status(200).json("Password reset successfull")
+       
+   } catch (error) {
+    const customError=error as CustomError
+    res.status(customError.status || 500).json({ error: customError.message });
+       
+   }
   }
 //   student side auth--------------------------
 
@@ -157,8 +208,46 @@ async logout(req: Request, res: Response) {
     });
 }
   
+
+
+async studentForgotPassword(req: Request, res: Response) {
+  try {
+    const student=await AuthService.forgotpassword(req.body.username)
+    res.status(200).json("Reset email send")
+     
+ } catch (error) {
+  const customError=error as CustomError
+  res.status(customError.status || 500).json({ error: customError.message });
+     
+ }
 }
+async studentResetPassword(req: Request, res: Response) {
+  try {
+    const student=await AuthService.resetPassword(req.body.token, req.body.newPassword)
+    res.status(200).json("Password reset successfull")
+     
+ } catch (error) {
+  const customError=error as CustomError
+  res.status(customError.status || 500).json({ error: customError.message });
+     
+ }
+}
+async StudentLogout(req: Request, res: Response) {
+  try {
+    res.cookie('JwtStudent','',{
+     httpOnly:true,
+     expires:new Date(0)
+    })
+    res.status(200).json({message:"student Loged out"})
+     
+ } catch (error) {
+  const customError=error as CustomError
+  res.status(customError.status || 500).json({ error: customError.message });
+     
+ }
+}
+//   student
 
-
+}
 
 export default new authController();

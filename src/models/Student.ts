@@ -11,7 +11,10 @@ Is_block:boolean,
 photo ?:string,
 is_verified:boolean,
 class_id ?:mongoose.Schema.Types.ObjectId,
-googleId?:string
+googleId?:string,
+resetPasswordToken?:string | null,
+resetPasswordExpires?:number |null
+
 
 }
 const StudentSchema:Schema=new Schema({
@@ -25,7 +28,9 @@ const StudentSchema:Schema=new Schema({
     photo:{type:String,require:false},
     is_verified:{type:Boolean,default:false},
     class_id:{type:mongoose.Schema.Types.ObjectId,ref:'Classroom',required:false},
-    googleId: {type:String,require:false}
+    googleId: {type:String,require:false},
+    resetPasswordToken: { type: String, required: false },
+    resetPasswordExpires: { type: Date, required: false },
 })
 
 const Student=mongoose.model<IStudent>('Student',StudentSchema)

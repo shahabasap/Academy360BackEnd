@@ -65,6 +65,16 @@ class authService {
     return teacher
 
   }
+  async TeacherForgotpassword(username:string) {
+    const response=await authRepositories.sendTeacherResetPasswordEmail(username)
+    return response
+}
+
+async TeacherResetPassword(token: string, newPassword: string) {
+    const response=await authRepositories.resetTeacherPassword(token, newPassword)
+    return response
+}
+
 
   // Student Service-----------------------------------------
 
@@ -101,6 +111,16 @@ class authService {
  
 
   }
+  async forgotpassword(username:string) {
+       const response=await authRepositories.sendStudentResetPasswordEmail(username)
+       return response
+  }
+
+  async resetPassword(token: string, newPassword: string) {
+       const response=await authRepositories.resetStudentPassword(token, newPassword)
+       return response
+  }
+
   // google authentication-
   async findOrCreateUser(profile: any): Promise<IStudent> {
     let user = await authRepositories.findByGoogleId(profile.id);

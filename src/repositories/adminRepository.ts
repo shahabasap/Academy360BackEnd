@@ -4,6 +4,8 @@ import { CustomError,CustomErrorClass } from '../types/CustomError';
 
 
 class adminRepository {
+  // student repo part------------------------
+
   async Students() {
     try {
 
@@ -15,6 +17,31 @@ class adminRepository {
     }
 
   }
+  async blockUser(id:string) {
+    try {
+
+        const StudentsData=await Student.updateOne({_id:id},{Is_block:true})
+        return StudentsData
+    } catch (error) {
+        const customError=error as CustomError
+        throw new CustomErrorClass(customError.message, 500)
+    }
+
+  }
+  async unblockUser(id:string) {
+    try {
+
+      const StudentsData=await Student.updateOne({_id:id},{Is_block:false})
+        return StudentsData
+    } catch (error) {
+        const customError=error as CustomError
+        throw new CustomErrorClass(customError.message, 500)
+    }
+
+  }
+
+  // Teacher repo part------------------------
+
   async Teachers() {
     try {
 
@@ -24,6 +51,29 @@ class adminRepository {
         const customError=error as CustomError
         throw new CustomErrorClass(customError.message, 500)
     }
+  }
+
+  async blockTeacher(id:string) {
+    try {
+
+        const TeacherData=await Teacher.updateOne({_id:id},{Is_block:true})
+        return TeacherData
+    } catch (error) {
+        const customError=error as CustomError
+        throw new CustomErrorClass(customError.message, 500)
+    }
+
+  }
+  async unblockTeacher(id:string) {
+    try {
+
+      const TeacherData=await Teacher.updateOne({_id:id},{Is_block:false})
+        return TeacherData
+    } catch (error) {
+        const customError=error as CustomError
+        throw new CustomErrorClass(customError.message, 500)
+    }
+
   }
 }
 

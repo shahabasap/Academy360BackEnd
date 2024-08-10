@@ -7,6 +7,7 @@ import AuthUtilities from "../utils/AuthUtilities";
 
 
 class adminController{
+
   async createAdmin(req:Request,res:Response)
   {
     try {
@@ -30,6 +31,7 @@ class adminController{
    
 
   }
+  // Student controllers--------------------------
   async FetchStudentsDetails(req:Request,res:Response)
   {
     try {
@@ -43,6 +45,34 @@ class adminController{
    
 
   }
+  async StudentBlock(req:Request,res:Response)
+  {
+    try {
+        const StudentsData= await adminServices.block(req.params.id)
+        res.status(200).json(StudentsData)
+        
+    } catch (error) {
+        const customError=error as CustomError
+        res.status(customError.status || 500).json({ error: customError.message });
+    }
+   
+
+  }
+  async StudentUnblock(req:Request,res:Response)
+  {
+    try {
+        const StudentsData= await adminServices.unblock(req.params.id)
+        res.status(200).json(StudentsData)
+        
+    } catch (error) {
+        const customError=error as CustomError
+        res.status(customError.status || 500).json({ error: customError.message });
+    }
+   
+
+  }
+  // Teacher Controllers-------------------------
+
   async FetchTeachersDetails(req:Request,res:Response)
   {
     try {
@@ -56,7 +86,34 @@ class adminController{
    
 
   }
+
+async TeacherBlock(req:Request,res:Response)
+{
+  try {
+      const StudentsData= await adminServices.teacherblock(req.params.id)
+      res.status(200).json(StudentsData)
+      
+  } catch (error) {
+      const customError=error as CustomError
+      res.status(customError.status || 500).json({ error: customError.message });
+  }
+ 
+
 }
 
+async TeacherUnblock(req:Request,res:Response)
+{
+  try {
+      const StudentsData= await adminServices.teacherunblock(req.params.id)
+      res.status(200).json(StudentsData)
+      
+  } catch (error) {
+      const customError=error as CustomError
+      res.status(customError.status || 500).json({ error: customError.message });
+  }
+ 
+
+}
+}
 
 export default new adminController();
