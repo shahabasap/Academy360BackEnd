@@ -8,7 +8,7 @@ const router = Router();
 router.post('/login', authController.login);
 router.post('/register', authController.SignUp);
 router.post('/otp', authController.Otp);
-router.post('/verify', authController.VerifyOtp);
+router.post('/student/verify', authController.VerifyOtp);
 router.get('/google', authController.googleAuth);
 router.get('/google/callback', authController.googleAuthCallback);
 router.get('/logout', authController.logout);

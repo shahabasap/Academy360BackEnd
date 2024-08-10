@@ -14,9 +14,9 @@ class authController{
     try {
   
       const AdminData = await AuthService.AdminSignIn(req.body);
-      if (AdminData && typeof AdminData == 'object') {
+      if (AdminData && typeof AdminData !== 'string') {
   
-        AuthUtilities.CreateJwtToken(res,AdminData.secretKey as string,"JwtAdmin")
+        AuthUtilities.CreateJwtToken(res,AdminData._id as mongoose.Schema.Types.ObjectId,"JwtAdmin")
   
       }
       res.status(201).json(AdminData);
@@ -89,7 +89,7 @@ class authController{
 
 async login(req: Request, res: Response) {
   try {
-    console.log("data",req.body)
+  
     const StudentData = await AuthService.SignIn(req.body);
     if (StudentData && typeof StudentData !== 'string') {
 

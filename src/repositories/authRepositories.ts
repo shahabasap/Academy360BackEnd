@@ -1,25 +1,15 @@
 import Teacher from '../models/Teacher';
 import Student,{IStudent} from '../models/Student';
 import { CustomError,CustomErrorClass } from '../types/CustomError';
+import Admin from '../models/admin';
 
 
 class AuthRepository {
     // admin login----------
     async Adminlogin(data: { username: string; password: string }) {
         try {
-             const username=process.env.AdminMail
-             const password=process.env.Password
-             const AdminKey=process.env.AdminKey
-          
-           if(data.username==username && data.password==password)
-           {
-            console.log("skdfksdjf")
-            return {username:username,secretKey:AdminKey}
-           }
-           
-           throw new CustomErrorClass("Email and Password  is not match",401);
-           
-          
+             const admin=await Admin.findOne({username:data.username})
+             return admin
         } catch (error) {
             const customError=error as CustomError
             throw new CustomErrorClass(customError.message, 500)

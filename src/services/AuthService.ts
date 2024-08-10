@@ -15,8 +15,19 @@ class authService {
   // admin Services----------------
   async AdminSignIn(data:{username:string,password:string}) {
     const admin = await authRepositories.Adminlogin(data);
-    
-     return admin
+    if (!admin || admin instanceof CustomErrorClass) {
+      throw new CustomErrorClass("Email and Password is not match", 401);
+    }
+    const comparePassword=await AuthUtilities.comparePassword(data.password,admin.password)
+      if(comparePassword)
+      {
+        return admin
+      }
+      else
+      {
+         throw new CustomErrorClass("Email and Password   is not match",401);
+         
+      }
 
   }
 
