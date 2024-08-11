@@ -188,8 +188,16 @@ private async sendResetEmail(username: string, token: string, role: string) {
             pass: process.env.EMAIL_PASS,
         }
     });
-
-    const resetLink = `http://yourfrontend.com/reset-password/${token}`;
+    let resetLink
+  if(role=="Teacher")
+  {
+     resetLink = `http://localhost:5173/teacher/resetpassword/${token}`;
+  }
+  else
+  {
+     resetLink = `http://localhost:5173/resetpassword/${token}`;
+  }
+    
     const mailOptions = {
         to: username,
         from: 'no-reply@yourapp.com',

@@ -8,6 +8,7 @@ import AuthUtilities from "../utils/AuthUtilities";
 import passport from 'passport';
 
 
+
 class authController{
   // Admin Auth-------
   async AdminLogin(req: Request, res: Response) {
@@ -223,6 +224,7 @@ async studentForgotPassword(req: Request, res: Response) {
 }
 async studentResetPassword(req: Request, res: Response) {
   try {
+  
     const student=await AuthService.resetPassword(req.body.token, req.body.newPassword)
     res.status(200).json("Password reset successfull")
      
