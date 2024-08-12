@@ -203,8 +203,15 @@ async logout(req: Request, res: Response) {
 
 async googleAuthentication(req: Request, res: Response) {
   try {
-    const student=await AuthService.googleAuth(req.body)
-    res.status(200).json(student)
+    const user=await AuthService.googleAuth(req.body)
+    if(user.role=="Student")
+    {
+      AuthUtilities.CreateJwtToken(res,user._id as mongoose.Schema.Types.ObjectId,"JwtStudent")
+    }else if(user.role=="Teacher")
+    {
+      AuthUtilities.CreateJwtToken(res,user._id as mongoose.Schema.Types.ObjectId,"JwtTeacher")
+    }
+    res.status(200).json(user)
      
  } catch (error) {
   const customError=error as CustomError

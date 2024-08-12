@@ -13,7 +13,8 @@ is_verified:boolean,
 class_id ?:mongoose.Schema.Types.ObjectId,
 isGoogleSign?:boolean,
 resetPasswordToken?:string | null,
-resetPasswordExpires?:number |null
+resetPasswordExpires?:number |null,
+role: string
 
 
 }
@@ -31,6 +32,7 @@ const StudentSchema:Schema=new Schema({
     isGoogleSign: {type:String,default:false,require:false},
     resetPasswordToken: { type: String, required: false },
     resetPasswordExpires: { type: Date, required: false },
+    role:{type:String,default:"Student"}
 })
 
 const Student=mongoose.model<IStudent>('Student',StudentSchema)

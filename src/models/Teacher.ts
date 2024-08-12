@@ -18,7 +18,8 @@ export interface ITeacher extends Document {
     Is_verified: boolean;
     resetPasswordToken?:string | null;
     resetPasswordExpires?:number |null;
-    isGoogleSign ?: boolean
+    isGoogleSign ?: boolean;
+    role:string
 }
 
 const TeacherSchema: Schema = new Schema({
@@ -40,6 +41,7 @@ const TeacherSchema: Schema = new Schema({
     resetPasswordToken: { type: String, required: false },
     resetPasswordExpires: { type: Date, required: false },
     isGoogleSign: {type:String,default:false,require:false},
+    role:{type:String,default:"Teacher"}
 });
 
  const Teacher = mongoose.model<ITeacher>('Teacher', TeacherSchema);
