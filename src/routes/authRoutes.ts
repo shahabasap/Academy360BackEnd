@@ -11,9 +11,8 @@ router.post('/otp', authController.Otp);
 router.post('/student/verify', authController.VerifyOtp);
 router.post('/forgotpassword',authController.studentForgotPassword)
 router.post('/reset-password',authController.studentResetPassword)
-router.get('/google', authController.googleAuth);
-router.get('/google/callback', authController.googleAuthCallback);
 router.get('/logout', authController.StudentLogout);
+
 
 
 // Admin Routes------------------------
@@ -29,6 +28,9 @@ router.post('/teacher/verify', authController.TeacherVerifyOtp);
 router.get('/teacher/logout',authController.TeacherLogout)
 router.post('/teacher/forgotpassword',authController.teacherForgotPassword)
 router.post('/teacher/reset-password',authController.teacherResetPassword)
+
+// Teacher , Student common--------------------------
+router.post('/google-signin',authController.googleAuthentication)
 
 
 

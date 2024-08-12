@@ -4,14 +4,14 @@ export interface IStudent extends Document{
 name:string,
 username:string,
 gender ?:string,
-password :string,
+password ? :string ,
 Phone ?:number,
 Joined:Date,
 Is_block:boolean,
 photo ?:string,
 is_verified:boolean,
 class_id ?:mongoose.Schema.Types.ObjectId,
-googleId?:string,
+isGoogleSign?:boolean,
 resetPasswordToken?:string | null,
 resetPasswordExpires?:number |null
 
@@ -19,7 +19,7 @@ resetPasswordExpires?:number |null
 }
 const StudentSchema:Schema=new Schema({
     name:{type:String,require:true},
-    password:{type:String,required:true},
+    password:{type:String,required:false},
     username:{type:String,require:true},
     gender:{type:String,require:false},
     Phone:{type:Number,require:false},
@@ -28,7 +28,7 @@ const StudentSchema:Schema=new Schema({
     photo:{type:String,require:false},
     is_verified:{type:Boolean,default:false},
     class_id:{type:mongoose.Schema.Types.ObjectId,ref:'Classroom',required:false},
-    googleId: {type:String,require:false},
+    isGoogleSign: {type:String,default:false,require:false},
     resetPasswordToken: { type: String, required: false },
     resetPasswordExpires: { type: Date, required: false },
 })

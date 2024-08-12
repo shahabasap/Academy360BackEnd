@@ -11,7 +11,7 @@ import studentRoutes from './routes/studentRoutes';
 import teacherRoutes from './routes/teacherRoutes';
 import authRoutes from './routes/authRoutes';
 import adminRoutes from './routes/adminRountes';
-import './config/googleAuth'; // Ensure this is imported to initialize passport
+
 
 const app = express();
 
@@ -23,8 +23,7 @@ app.use(session({
     saveUninitialized: false
 }));
 
-app.use(passport.initialize());
-app.use(passport.session());
+
 app.use(cookieParser());
 app.use(express.json()); 
 app.use(express.urlencoded({ extended: true }));

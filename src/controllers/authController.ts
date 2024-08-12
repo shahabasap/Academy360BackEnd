@@ -191,17 +191,7 @@ async login(req: Request, res: Response) {
       res.status(customError.status || 500).json({ error: customError.message });
     }
   }
-  async googleAuth(req: Request, res: Response) {
-    
-    passport.authenticate('google', { scope: ['profile', 'email'] })(req, res);
-}
-
-async googleAuthCallback(req: Request, res: Response) {
-    passport.authenticate('google', {
-        successRedirect: '/',
-        failureRedirect: '/login'
-    })(req, res);
-}
+  
 
 async logout(req: Request, res: Response) {
     req.logout(() => {
@@ -211,6 +201,17 @@ async logout(req: Request, res: Response) {
   
 
 
+async googleAuthentication(req: Request, res: Response) {
+  try {
+    const student=await AuthService.googleAuth(req.body)
+    res.status(200).json(student)
+     
+ } catch (error) {
+  const customError=error as CustomError
+  res.status(customError.status || 500).json({ error: customError.message });
+     
+ }
+}
 async studentForgotPassword(req: Request, res: Response) {
   try {
     const student=await AuthService.forgotpassword(req.body.username)

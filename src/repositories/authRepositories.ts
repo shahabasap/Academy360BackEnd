@@ -5,6 +5,7 @@ import Admin from '../models/admin';
 import nodemailer from 'nodemailer'
 import crypto from 'crypto';
 import AuthUtilities from '../utils/AuthUtilities';
+import { trusted } from 'mongoose';
 
 
 class AuthRepository {
@@ -155,21 +156,58 @@ class AuthRepository {
             throw new CustomErrorClass(customError.message, 500);
         }
     }
+      
+    async AddUser(data: any) {
+        try {
+         
+      
+          if (data.role === "Student") {
+            const isCreated = await Student.findOne({ username: data.data.username, is_verified: true });
+      
+            if (isCreated) {
+              return isCreated; // If the student already exists and is verified, return the existing student.
+            } else {
+              await Student.deleteOne({ username: data.data.username, is_verified: false }); // Remove unverified student entries.
+      
+              const createNewUser = await Student.create({
+                username: data.data.username,
+                name: data.data.name,
+                is_verified: true,
+                isGoogleSign:true
+              });
+      
+              return createNewUser; // Return the newly created and verified student.
+            }
+          } else if (data.role === "Teacher") {
+            console.log('Teacher role detected');
+      
+            const isCreated = await Teacher.findOne({ username: data.data.username, Is_verified: true });
+      
+            if (isCreated) {
+              return isCreated; // If the teacher already exists and is verified, return the existing teacher.
+            } else {
+              await Teacher.deleteOne({ username: data.data.username, Is_verified: false }); // Remove unverified teacher entries.
+      
+              const createNewUser = await Teacher.create({
+                username: data.data.username,
+                name: data.data.name,
+                Is_verified: true,
+                isGoogleSign:true
+              });
+      
+              return createNewUser; // Return the newly created and verified teacher.
+            }
+          } else {
+            throw new Error("Invalid role specified");
+          }
+        } catch (error) {
+          console.error("Error in AddUser:", error);
+          throw error; // Re-throw the error so it can be handled by the caller.
+        }
+      }
+      
 
-
-    // google user Auth----------------------
-    async findByGoogleId(googleId: string): Promise<IStudent | null> {
-        return Student.findOne({ googleId });
-      }
     
-      async create(user: Partial<IStudent>): Promise<IStudent> {
-        return Student.create(user);
-      }
-    
-      async findById(id: string): Promise<IStudent | null> {
-        return Student.findById(id);
-      }
-   
     
 
 

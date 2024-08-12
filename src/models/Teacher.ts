@@ -5,7 +5,7 @@ export interface ITeacher extends Document {
     name: string;
     gender ?: 'Male' | 'Female';
     phone ?: number;
-    password : string;
+    password ?: string;
     JoinedDate?: Date;
     classrooms ?: mongoose.Schema.Types.ObjectId[];
     LastUpdation ?: Date;
@@ -17,7 +17,8 @@ export interface ITeacher extends Document {
     yearOfExperienceTo ?: Date;
     Is_verified: boolean;
     resetPasswordToken?:string | null;
-    resetPasswordExpires?:number |null
+    resetPasswordExpires?:number |null;
+    isGoogleSign ?: boolean
 }
 
 const TeacherSchema: Schema = new Schema({
@@ -25,7 +26,7 @@ const TeacherSchema: Schema = new Schema({
     name: { type: String, required: true },
     gender: { type: String, enum: ['Male', 'Female'], required:false },
     phone: { type: Number, required: false },
-    password: { type: String, required: true },
+    password: { type: String, required: false },
     JoinedDate: { type: Date, default: Date.now },
     classrooms: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Classroom' }],
     LastUpdation: { type: Date, default: Date.now },
@@ -38,6 +39,7 @@ const TeacherSchema: Schema = new Schema({
     Is_verified: { type: Boolean, default: false },
     resetPasswordToken: { type: String, required: false },
     resetPasswordExpires: { type: Date, required: false },
+    isGoogleSign: {type:String,default:false,require:false},
 });
 
  const Teacher = mongoose.model<ITeacher>('Teacher', TeacherSchema);

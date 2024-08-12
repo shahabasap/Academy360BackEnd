@@ -38,7 +38,7 @@ class authService {
     if (!teacher || teacher instanceof CustomErrorClass) {
       throw new CustomErrorClass("Email and Password is not match", 401);
     }
-      const comparePassword=await AuthUtilities.comparePassword(data.password,teacher.password)
+      const comparePassword=await AuthUtilities.comparePassword(data.password,teacher.password as string)
       if(comparePassword)
       {
         return teacher
@@ -54,8 +54,8 @@ class authService {
   }
  
   async TeacherSignUp(data:{name:string,username:string,password:string}) {
-    type Datatype = Pick<ITeacher, 'username' | 'password' | 'name'>;
-    const updatedData: Datatype = { ...data };
+  
+    const updatedData = { ...data };
      updatedData.password =await AuthUtilities.getHashedPassword(data.password)
     const teacher = await authRepositories.AddNewTeacher(updatedData);
 
@@ -78,21 +78,22 @@ async TeacherResetPassword(token: string, newPassword: string) {
 
   // Student Service-----------------------------------------
 
-  async SignUp(data:{name:string,username:string,password:string}) {
-    type Datatype = Pick<IStudent, 'username' | 'password' | 'name'>;
-    const updatedData: Datatype = { ...data };
-    updatedData.password =await AuthUtilities.getHashedPassword(data.password)
+  async SignUp(data:{name:string, username:string, password:string}) {
+   
+    
+    const updatedData = { ...data, password: data.password as string };
+    
     const student = await authRepositories.AddNewStudent(updatedData);
     if (student instanceof CustomErrorClass) {
       throw student;
+    }
+    return student;
   }
-    return student
-
-  }
+  
   async SignIn(data:{username:string,password:string}) {
     const student = await authRepositories.login(data);
     if (student && typeof student !== 'string') {
-      const comparePassword=await AuthUtilities.comparePassword(data.password,student.password)
+      const comparePassword=await AuthUtilities.comparePassword(data.password,student.password as string)
       if(comparePassword)
       {
         return student
@@ -120,27 +121,13 @@ async TeacherResetPassword(token: string, newPassword: string) {
        const response=await authRepositories.resetStudentPassword(token, newPassword)
        return response
   }
-
-  // google authentication-
-  async findOrCreateUser(profile: any): Promise<IStudent> {
-    let user = await authRepositories.findByGoogleId(profile.id);
-
-    if (!user) {
-      const newUser: Partial<IStudent> = {
-        googleId: profile.id,
-        username: profile.emails[0].value,
-        name: profile.displayName,
-      };
-
-      user = await authRepositories.create(newUser);
-    }
-
-    return user;
+  async googleAuth(data:any) {
+       const response=await authRepositories.AddUser(data)
+       return response
   }
 
-  async findUserById(id: string): Promise<IStudent | null> {
-    return authRepositories.findById(id);
-  }
+
+  
  
   
 }
