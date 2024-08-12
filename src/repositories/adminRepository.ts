@@ -4,6 +4,68 @@ import { CustomError,CustomErrorClass } from '../types/CustomError';
 
 
 class adminRepository {
+  async dashboard() {
+    const currentDate = new Date();
+    const fourMonthsAgo = new Date(currentDate.setMonth(currentDate.getMonth() - 4));
+  
+    // Calculate the count of students who joined in the past 4 months
+    const studentData = await Student.aggregate([
+      { $match: { is_verified: true, Joined: { $gte: fourMonthsAgo } } },
+      {
+        $group: {
+          _id: { month: { $month: "$Joined" }, year: { $year: "$Joined" } },
+          count: { $sum: 1 }
+        }
+      },
+      { $sort: { "_id.year": 1, "_id.month": 1 } }
+    ]);
+  
+    // Calculate the count of teachers who joined in the past 4 months
+    const teacherData = await Teacher.aggregate([
+      { $match: { Is_verified: true, JoinedDate: { $gte: fourMonthsAgo } } },
+      {
+        $group: {
+          _id: { month: { $month: "$JoinedDate" }, year: { $year: "$JoinedDate" } },
+          count: { $sum: 1 }
+        }
+      },
+      { $sort: { "_id.year": 1, "_id.month": 1 } }
+    ]);
+  
+
+  
+    const data: { name: string; Students: number; Teachers: number }[] = [];
+const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+// Populate the data array
+for (let i = 0; i < 4; i++) {
+  const studentMonthData = studentData[i] || { count: 0, _id: { month: (new Date().getMonth() + 1) - i } };
+  const teacherMonthData = teacherData[i] || { count: 0, _id: { month: (new Date().getMonth() + 1) - i } };
+  data.push({
+    name: months[studentMonthData._id.month - 1],
+    Students: studentMonthData.count,
+    Teachers: teacherMonthData.count
+  });
+}
+
+// Sort the data array by month in ascending order
+data.sort((a, b) => {
+  const monthIndexA = months.indexOf(a.name);
+  const monthIndexB = months.indexOf(b.name);
+  return monthIndexA - monthIndexB;
+});
+
+
+
+  
+ 
+    return {
+      StudentsCount:studentData,
+      TeacherCount:teacherData,
+      CharData:data
+    }
+  }
+  
   // student repo part------------------------
 
   async Students() {

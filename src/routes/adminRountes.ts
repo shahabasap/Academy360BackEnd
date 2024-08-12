@@ -10,6 +10,7 @@ router.post('/createAdmin',autMiddleware.AdminAuthenticateToken,adminController.
 router.get('/teachers',autMiddleware.AdminAuthenticateToken, adminController.FetchTeachersDetails);
 router.put('/teacher-block/:id',autMiddleware.AdminAuthenticateToken, adminController.TeacherBlock);
 router.put('/teacher-unblock/:id',autMiddleware.AdminAuthenticateToken, adminController.TeacherUnblock);
+router.get('/dashboard',autMiddleware.AdminAuthenticateToken,adminController.dashboardData)
 
 
 router.get('/students',autMiddleware.AdminAuthenticateToken, adminController.FetchStudentsDetails);

@@ -34,6 +34,7 @@ class AuthRepository {
     }
     async AddNewTeacher(data: { name: string; username: string; password: string }) {
         try {
+            await Teacher.deleteOne({username:data.username,Is_verified:false})
             const TeacherExist= await Teacher.findOne({username:data.username})
             if(TeacherExist)
             {
@@ -92,6 +93,9 @@ class AuthRepository {
 
     async AddNewStudent(data: { name: string; username: string; password: string }) {
         try {
+
+            await Student.deleteOne({username:data.username,is_verified:false})
+
             const StudentExist= await Student.findOne({username:data.username})
             if(StudentExist)
             {
@@ -162,6 +166,11 @@ class AuthRepository {
          
       
           if (data.role === "Student") {
+            const iSbolock = await Student.findOne({ username: data.data.username, is_verified: true,Is_block:true});
+            if (iSbolock) {
+                throw new CustomErrorClass("User is blocked", 403);
+            }
+
             const isCreated = await Student.findOne({ username: data.data.username, is_verified: true });
       
             if (isCreated) {
@@ -179,8 +188,11 @@ class AuthRepository {
               return createNewUser; // Return the newly created and verified student.
             }
           } else if (data.role === "Teacher") {
-            console.log('Teacher role detected');
-      
+           
+           const isBlocked=await Teacher.findOne({ username: data.data.username, Is_verified: true,Is_block:true });
+           if (isBlocked) {
+            throw new CustomErrorClass("User is blocked", 403);
+           }
             const isCreated = await Teacher.findOne({ username: data.data.username, Is_verified: true });
       
             if (isCreated) {

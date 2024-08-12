@@ -6,7 +6,14 @@ import { CustomErrorClass } from "../types/CustomError";
 
 
 
-class teacherService {
+class adminServices {
+  // admin--------------------
+  
+  async dashboardData() {
+    const dashboard = await adminRepository.dashboard();
+  return dashboard
+
+  }
 //  Student Services------------------
 
   async Students() {
@@ -66,4 +73,4 @@ async teacherunblock(id:string) {
 
 }
 }
-export default new teacherService();
+export default new adminServices();

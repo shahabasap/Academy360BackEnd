@@ -114,6 +114,19 @@ async TeacherUnblock(req:Request,res:Response)
  
 
 }
+async dashboardData(req:Request,res:Response)
+{
+  try {
+      const Dashboard= await adminServices.dashboardData()
+      res.status(200).json(Dashboard)
+      
+  } catch (error) {
+      const customError=error as CustomError
+      res.status(customError.status || 500).json({ error: customError.message });
+  }
+ 
+
+}
 }
 
 export default new adminController();
