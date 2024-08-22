@@ -18,6 +18,7 @@ export interface ITeacher extends Document {
     resetPasswordExpires?: number | null;
     isGoogleSign?: boolean;  // Updated type to boolean
     role: string;
+    
 }
 
 type Experience = {
