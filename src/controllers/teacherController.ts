@@ -3,7 +3,7 @@ import { trusted } from 'mongoose';
 import { CustomError } from '../types/CustomError';
 import teacherService from '../services/teacherService';
 import {CustomRequest} from '../types/CustomRequest'
-import {ITeacher} from '../models/Teacher'
+import {ITeacher} from '../types/CommonTypes'
 
 
 class teacherController{

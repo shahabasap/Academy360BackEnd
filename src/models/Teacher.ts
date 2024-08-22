@@ -1,31 +1,7 @@
 import mongoose, { Document, Schema } from "mongoose";
+import {ITeacher} from '../types/CommonTypes'
 
-export interface ITeacher extends Document {
-    username: string;
-    name: string;
-    gender?: 'Male' | 'Female';
-    phone?: number;
-    password?: string;
-    JoinedDate?: Date;
-    classrooms?: mongoose.Schema.Types.ObjectId[];
-    LastUpdation?: Date;
-    Is_block: boolean;
-    photo?: string;
-    qualification?: string;
-    Experience?: Experience[];
-    Is_verified: boolean;
-    resetPasswordToken?: string | null;
-    resetPasswordExpires?: number | null;
-    isGoogleSign?: boolean;  // Updated type to boolean
-    role: string;
-    
-}
 
-type Experience = {
-    ExperiencedInstitute?: string;
-    yearOfExperiencefrom?: Date;
-    yearOfExperienceTo?: Date;
-}
 
 
 const TeacherSchema: Schema = new Schema({

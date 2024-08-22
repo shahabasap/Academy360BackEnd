@@ -1,10 +1,7 @@
 import mongoose, { Document, Schema } from 'mongoose';
+import {Iotp} from '../types/CommonTypes'
 
-interface Iotp extends Document {
-    email: string;
-    otp: number;
-    expiresAt: Date;
-}
+
 
 const OtpSchema = new Schema<Iotp>({
     email: { type: String, required: true },

@@ -1,6 +1,6 @@
 import studentRepository from "../repositories/studentRepository";
 // import { CustomErrorClass } from "../types/CustomError";
-import {IStudent} from '../models/Student'
+import {IStudent} from '../types/CommonTypes'
 import fileRepository from "../repositories/fileRepository";
 
 

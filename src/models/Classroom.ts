@@ -1,21 +1,5 @@
 import mongoose,{Types , Document, Schema } from 'mongoose';
-
-interface IClassroom extends Document {
-  subject: string;
-  description: string;
-  createdAt: Date;
-  updatedAt: Date;
-  teacher:string;
-  studentsid ?:Types.ObjectId[];
-  examsid ?:Types.ObjectId[];
-  materialsid ?:Types.ObjectId[];
-  worksid ?:Types.ObjectId[];
-  announcementsid ?:Types.ObjectId[];
-
-}
-
-
-
+import {IClassroom} from '../types/CommonTypes'
 
 
 

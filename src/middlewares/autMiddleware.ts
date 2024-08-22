@@ -1,9 +1,12 @@
 import jwt from 'jsonwebtoken';
 import { Response, NextFunction,Request } from 'express';
-import Student, { IStudent } from '../models/Student';
-import Teacher, { ITeacher } from '../models/Teacher';
+import Student from '../models/Student';
+import Teacher from '../models/Teacher';
+import {ITeacher} from '../types/CommonTypes'
 import { CustomJwtPayload } from '../types/CustomRequest';
-import Admin,{IAdmin} from '../models/admin';
+import Admin from '../models/admin';
+import IAdmin from '../types/CommonTypes'
+import IStudent from '../types/CommonTypes'
 
 class AuthMiddleware {
   authenticateToken = async (req: Request, res: Response, next: NextFunction): Promise<void> => {

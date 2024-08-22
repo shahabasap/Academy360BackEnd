@@ -1,6 +1,6 @@
 import teacherRepository from "../repositories/teacerRepository";
 import { CustomErrorClass } from "../types/CustomError";
-import {ITeacher} from '../models/Teacher'
+import {ITeacher} from '../types/CommonTypes'
 import fileRepository from "../repositories/fileRepository";
 
 

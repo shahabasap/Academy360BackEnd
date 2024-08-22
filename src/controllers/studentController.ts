@@ -1,7 +1,7 @@
 import { Response, NextFunction,Request } from 'express';
 import studentService from '../services/studentService';
 import { CustomError } from '../types/CustomError';
-import { IStudent } from '../models/Student';
+import {IStudent} from '../types/CommonTypes'
 
 class StudentController {
   async home(req: Request, res: Response): Promise<void> {

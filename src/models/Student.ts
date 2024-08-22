@@ -1,23 +1,7 @@
-import mongoose,{Document,Schema} from 'mongoose'
-
-export interface IStudent extends Document{
-name:string,
-username:string,
-gender ?:string,
-password ? :string ,
-Phone ?:number,
-Joined:Date,
-Is_block:boolean,
-photo ?:string,
-is_verified:boolean,
-class_id ?:mongoose.Schema.Types.ObjectId,
-isGoogleSign?:boolean,
-resetPasswordToken?:string | null,
-resetPasswordExpires?:number |null,
-role: string
+import mongoose,{Schema} from 'mongoose'
+import {IStudent} from '../types/CommonTypes'
 
 
-}
 const StudentSchema:Schema=new Schema({
     name:{type:String,require:true},
     password:{type:String,required:false},

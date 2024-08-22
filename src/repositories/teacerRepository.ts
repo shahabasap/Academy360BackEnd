@@ -1,6 +1,6 @@
 import  Teacher  from "../models/Teacher";
 import { CustomError,CustomErrorClass } from '../types/CustomError';
-import {ITeacher} from '../models/Teacher'
+import {ITeacher} from '../types/CommonTypes'
 
 
 

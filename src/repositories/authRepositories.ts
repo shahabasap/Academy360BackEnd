@@ -1,5 +1,6 @@
 import Teacher from '../models/Teacher';
-import Student,{IStudent} from '../models/Student';
+import Student from '../models/Student';
+import {IStudent} from '../types/CommonTypes'
 import { CustomError,CustomErrorClass } from '../types/CustomError';
 import Admin from '../models/admin';
 import nodemailer from 'nodemailer'

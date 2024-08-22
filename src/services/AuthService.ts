@@ -1,8 +1,8 @@
 
 import authRepositories from "../repositories/authRepositories";
 import AuthUtilities from "../utils/AuthUtilities";
-import {ITeacher} from "../models/Teacher";
-import {IStudent} from "../models/Student";
+import {ITeacher} from '../types/CommonTypes'
+import IStudent from '../types/CommonTypes'
 import { CustomErrorClass } from "../types/CustomError";
 
 
