@@ -81,8 +81,8 @@ async TeacherResetPassword(token: string, newPassword: string) {
   async SignUp(data:{name:string, username:string, password:string}) {
    
     
-    const updatedData = { ...data, password: data.password as string };
-    
+    const updatedData = { ...data};
+    updatedData.password =await AuthUtilities.getHashedPassword(data.password)
     const student = await authRepositories.AddNewStudent(updatedData);
     if (student instanceof CustomErrorClass) {
       throw student;

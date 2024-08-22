@@ -13,7 +13,7 @@ router.put('/teacher-unblock/:id',autMiddleware.AdminAuthenticateToken, adminCon
 router.get('/dashboard',autMiddleware.AdminAuthenticateToken,adminController.dashboardData)
 
 
-router.get('/students',autMiddleware.AdminAuthenticateToken, adminController.FetchStudentsDetails);
+router.get('/students',autMiddleware.AdminAuthenticateToken, adminController.getStudents);
 router.put('/student-block/:id',autMiddleware.AdminAuthenticateToken, adminController.StudentBlock);
 router.put('/student-unblock/:id',autMiddleware.AdminAuthenticateToken, adminController.StudentUnblock);
 

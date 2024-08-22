@@ -32,19 +32,20 @@ class adminController{
 
   }
   // Student controllers--------------------------
-  async FetchStudentsDetails(req:Request,res:Response)
-  {
+  async getStudents(req: Request, res: Response) {
     try {
-        const StudentsData= await adminServices.Students()
-        res.status(200).json(StudentsData)
-        
+      const page = parseInt(req.query.page as string) || 1;
+      const pageSize = parseInt(req.query.pageSize as string) || 10;
+      const students = await adminServices.getVerifiedStudents(page, pageSize);
+      return res.status(200).json(students);
     } catch (error) {
-        const customError=error as CustomError
-        res.status(customError.status || 500).json({ error: customError.message });
+      const customError=error as CustomError
+      res.status(customError.status || 500).json({ error: customError.message });
     }
+  }
    
 
-  }
+  
   async StudentBlock(req:Request,res:Response)
   {
     try {
@@ -76,7 +77,9 @@ class adminController{
   async FetchTeachersDetails(req:Request,res:Response)
   {
     try {
-        const TeacherData= await adminServices.Teachers()
+       const page= parseInt(req.query.page as string) || 1;
+       const pageSize=parseInt(req.query.limit as string) || 10;
+        const TeacherData= await adminServices.getVerifiedTeachers(page,pageSize)
         res.status(200).json(TeacherData)
         
     } catch (error) {

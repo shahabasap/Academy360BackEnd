@@ -13,7 +13,14 @@ class AuthMiddleware {
         const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as CustomJwtPayload;
         const data = await Student.findById(decoded.userdata).select('-password');
         req.user = data as IStudent;
-        next();
+        if(req.user)
+          {
+            next();
+          }
+          else
+           {
+            res.status(401).json({ message: 'Not authorized, no token' });
+           }
       } catch (error) {
         res.status(401).json({ message: 'Not authorized, invalid token' });
       }
@@ -23,13 +30,22 @@ class AuthMiddleware {
   };
 
   TeacherAuthenticateToken = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  
     const token = req.cookies['JwtTeacher'];
     if (token) {
       try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as CustomJwtPayload;
         const data = await Teacher.findById(decoded.userdata).select('-password');
         req.user = data as ITeacher;
-        next();
+         if(req.user)
+         {
+          next();
+         }
+         else
+         {
+          res.status(401).json({ message: 'Not authorized, no token' });
+         }
+        
       } catch (error) {
         res.status(401).json({ message: 'Not authorized, invalid token' });
       }
@@ -45,7 +61,14 @@ class AuthMiddleware {
         const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as CustomJwtPayload;
         const data = await Admin.findById(decoded.userdata).select('-password');
         req.user = data as IAdmin;
-        next();
+        if(req.user)
+        {
+          next();
+        }
+        else
+         {
+          res.status(401).json({ message: 'Not authorized, no token' });
+         }
       } catch (error) {
         res.status(401).json({ message: 'Not authorized, invalid token' });
       }

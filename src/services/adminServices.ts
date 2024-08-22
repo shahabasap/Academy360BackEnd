@@ -16,21 +16,10 @@ class adminServices {
   }
 //  Student Services------------------
 
-  async Students() {
-    const students = await adminRepository.Students();
-    if(!students)
-        {
-            throw new CustomErrorClass("Students Not Found",400);
-            
-        }
-      else if(students.length==0)  
-      {
-        throw new CustomErrorClass("Data Not Found",204);
-      }
+async getVerifiedStudents(page: number, pageSize: number) {
+  return await adminRepository.getVerifiedStudents(page, pageSize);
+}
 
-    return students
-
-  }
   async block(id:string) {
     const isBlocked = await adminRepository.blockUser(id);
   return isBlocked
@@ -45,18 +34,9 @@ class adminServices {
   }
   // Techer Services------------------------
 
-  async Teachers() {
-    const teachers = await adminRepository.Teachers();
-    if(!teachers)
-        {
-            throw new CustomErrorClass("Teachers Not Found",400);
-            
-        }else if(teachers.length==0)  
-            {
-              throw new CustomErrorClass("Data Not Found",204);
-            }
-      
-    return teachers
+  async getVerifiedTeachers(page:number,pageSize:number) {
+  
+    return  await adminRepository.getVerifiedTeachers(page,pageSize)
 
   }
 

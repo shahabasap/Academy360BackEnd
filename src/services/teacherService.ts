@@ -1,6 +1,7 @@
-import teacerRepository from "../repositories/teacerRepository";
+import teacherRepository from "../repositories/teacerRepository";
 import { CustomErrorClass } from "../types/CustomError";
 import {ITeacher} from '../models/Teacher'
+import fileRepository from "../repositories/fileRepository";
 
 
 
@@ -8,8 +9,24 @@ import {ITeacher} from '../models/Teacher'
 class teacherService {
 
   async home(data:ITeacher) {
-     const home=teacerRepository.home(data)
+     const home=teacherRepository.home(data)
        return home
+  }
+
+  async profile(id:string) {
+     const profile:any=teacherRepository.findProfileDetails(id)
+     
+       return profile
+  }
+  
+  async updateProfile(id: string, data: Partial<ITeacher>, profilePic?: string) {
+    
+    if (profilePic) {
+      const imageUrl = await fileRepository.uploadProfilePicture(profilePic);
+      data.photo = imageUrl;
+    }
+
+    return teacherRepository.updateProfile(id, data);
   }
 }
 

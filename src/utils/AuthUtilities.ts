@@ -13,7 +13,7 @@ const saltRounds = 10;
         
       }
       async comparePassword(plainPassword:string,hashedPassword:string):Promise<boolean>{
-    
+       
         const isMatch= await bcrypt.compare(plainPassword,hashedPassword)
         return isMatch
       }

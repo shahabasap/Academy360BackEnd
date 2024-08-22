@@ -2,6 +2,12 @@ import Teacher from '../models/Teacher';
 import Student from '../models/Student';
 import { CustomError,CustomErrorClass } from '../types/CustomError';
 
+interface PaginatedResult<T> {
+  data: T[];
+  currentPage: number;
+  totalPages: number;
+  totalItems: number;
+}
 
 class adminRepository {
   async dashboard() {
@@ -68,16 +74,27 @@ data.sort((a, b) => {
   
   // student repo part------------------------
 
-  async Students() {
+  async getVerifiedStudents(page: number, pageSize: number): Promise<PaginatedResult<any>> {
     try {
+      const skip = (page - 1) * pageSize;
+      const totalItems = await Student.countDocuments({ is_verified: true }).exec();
+      const totalPages = Math.ceil(totalItems / pageSize);
 
-        const StudentsData=await Student.find({is_verified:true}).exec()
-        return StudentsData
+      const students = await Student.find({ is_verified: true })
+        .skip(skip)
+        .limit(pageSize)
+        .exec();
+
+      return {
+        data: students,
+        currentPage: page,
+        totalPages,
+        totalItems,
+      };
     } catch (error) {
-        const customError=error as CustomError
-        throw new CustomErrorClass(customError.message, 500)
+      const customError = error as CustomError;
+      throw new CustomErrorClass(customError.message, 500);
     }
-
   }
   async blockUser(id:string) {
     try {
@@ -104,11 +121,23 @@ data.sort((a, b) => {
 
   // Teacher repo part------------------------
 
-  async Teachers() {
+  async getVerifiedTeachers(page: number, pageSize: number): Promise<PaginatedResult<any>> {
     try {
+      const skip=(page-1) *pageSize
+      const totalItems= await Teacher.countDocuments({Is_verified:true}).exec();
+      const totalPages=Math.ceil(totalItems/pageSize)
 
-        const TeacherData=await Teacher.find({Is_verified:true}).exec()
-        return TeacherData
+      const teacher=await Teacher.find({Is_verified:true})
+      .skip(skip).
+      limit(pageSize)
+      .exec()
+
+      return { data:teacher,
+      currentPage:page,
+      totalPages,
+      totalItems
+     }
+
     } catch (error) {
         const customError=error as CustomError
         throw new CustomErrorClass(customError.message, 500)

@@ -6,6 +6,7 @@ import nodemailer from 'nodemailer'
 import crypto from 'crypto';
 import AuthUtilities from '../utils/AuthUtilities';
 import { trusted } from 'mongoose';
+import Otp from '../models/Otp';
 
 
 class AuthRepository {
@@ -23,6 +24,11 @@ class AuthRepository {
 
     async TeacherLogin(data: { username: string; password: string }) {
         try {
+            const isBlock= await Teacher.findOne({username:data.username,Is_block:true})
+            if(isBlock)
+            {
+                throw new CustomErrorClass("Your account is blocked", 403);
+            }
             
             const user = await Teacher.findOne({ username: data.username,Is_verified:true,Is_block:false }).exec();
             return user;
@@ -35,6 +41,8 @@ class AuthRepository {
     async AddNewTeacher(data: { name: string; username: string; password: string }) {
         try {
             await Teacher.deleteOne({username:data.username,Is_verified:false})
+            await Otp.deleteMany({email:data.username})
+            
             const TeacherExist= await Teacher.findOne({username:data.username})
             if(TeacherExist)
             {
@@ -95,6 +103,7 @@ class AuthRepository {
         try {
 
             await Student.deleteOne({username:data.username,is_verified:false})
+            await Otp.deleteMany({email:data.username})
 
             const StudentExist= await Student.findOne({username:data.username})
             if(StudentExist)
@@ -112,6 +121,13 @@ class AuthRepository {
     }
     async login(data: { username: string; password: string }) {
         try {
+            
+            const isBlock= await Student.findOne({username:data.username,Is_block:true})
+            if(isBlock)
+            {
+                throw new CustomErrorClass("Your account is blocked", 403);
+            }
+
     
            const user=await Student.findOne({username:data.username,Is_block:false,is_verified:true}).exec();
            return user
