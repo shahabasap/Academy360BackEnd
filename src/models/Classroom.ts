@@ -6,7 +6,7 @@ import {IClassroom} from '../types/CommonTypes'
 const ClassroomSchema: Schema = new Schema({
   subject: { type: String, required: true },
   description: { type: String, required: true },
-  teacher: { type: String, required: true },
+  teacherid: {type:mongoose.Schema.Types.ObjectId,ref:'Teacher',require:true},
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },
   studentsid:[{type:mongoose.Schema.Types.ObjectId,ref:'Student',require:false}],

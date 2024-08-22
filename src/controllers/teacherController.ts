@@ -4,6 +4,7 @@ import { CustomError } from '../types/CustomError';
 import teacherService from '../services/teacherService';
 import {CustomRequest} from '../types/CustomRequest'
 import {ITeacher} from '../types/CommonTypes'
+import {IClassroom} from '../types/CommonTypes'
 
 
 class teacherController{
@@ -21,6 +22,22 @@ class teacherController{
    
 
   }
+  // classrooms-------
+  async classroom(req:Request,res:Response)
+  {
+    try {
+
+        const classrooData= await teacherService.classroom(req.body,req.user as ITeacher)
+        res.status(200).json(classrooData)
+        
+    } catch (error) {
+        const customError=error as CustomError
+        res.status(customError.status || 500).json({ error: customError.message });
+    }
+   
+
+  }
+
   async profile(req:Request,res:Response)
   {
     try {

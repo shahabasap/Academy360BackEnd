@@ -65,12 +65,12 @@ export interface IClassroom extends Document {
     description: string;
     createdAt: Date;
     updatedAt: Date;
-    teacher:string;
-    studentsid ?:Types.ObjectId[];
-    examsid ?:Types.ObjectId[];
-    materialsid ?:Types.ObjectId[];
-    worksid ?:Types.ObjectId[];
-    announcementsid ?:Types.ObjectId[];
+    teacherid ? :mongoose.Types.ObjectId;
+    studentsid ?:mongoose.Types.ObjectId[];
+    examsid ?:mongoose.Types.ObjectId[];
+    materialsid ?:mongoose.Types.ObjectId[];
+    worksid ?:mongoose.Types.ObjectId[];
+    announcementsid ?:mongoose.Types.ObjectId[];
   
   }
 

@@ -9,6 +9,8 @@ const upload = multer({ dest: 'uploads/' });
 router.get('/home',autMiddleware.TeacherAuthenticateToken,teacherController.home);
 router.put('/profile/:id',autMiddleware.TeacherAuthenticateToken, upload.single('profilePic'), teacherController.updateProfile);
 router.get('/profile/:id',autMiddleware.TeacherAuthenticateToken,  teacherController.profile);
+router.post('/classroom',autMiddleware.TeacherAuthenticateToken,  teacherController.classroom);
+
 
 // Other routes...
 
