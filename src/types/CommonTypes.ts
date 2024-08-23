@@ -62,16 +62,22 @@ type Experience = {
 // classroom-------------------------------
 export interface IClassroom extends Document {
     subject: string;
+    classroomid:string;
     description: string;
     createdAt: Date;
     updatedAt: Date;
     teacherid ? :mongoose.Types.ObjectId;
-    studentsid ?:mongoose.Types.ObjectId[];
+    students ?:StudentData[];
     examsid ?:mongoose.Types.ObjectId[];
     materialsid ?:mongoose.Types.ObjectId[];
     worksid ?:mongoose.Types.ObjectId[];
     announcementsid ?:mongoose.Types.ObjectId[];
   
+  }
+
+  export type StudentData={
+    studentid:mongoose.Types.ObjectId;
+    IsAdded:boolean
   }
 
 //   Otp-------------------------

@@ -6,7 +6,6 @@ import express from 'express';
 import session from 'express-session';
 import passport from 'passport';
 import connectDB from './config/database';
-import classroomRoutes from './routes/classroomRoutes';
 import studentRoutes from './routes/studentRoutes';
 import teacherRoutes from './routes/teacherRoutes';
 import authRoutes from './routes/authRoutes';

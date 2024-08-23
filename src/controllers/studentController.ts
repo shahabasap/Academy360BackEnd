@@ -18,6 +18,7 @@ class StudentController {
       res.status(customError.status || 500).json({ message: customError.message });
     }
   }
+  
 
   // Profile controllers-----
   async profile(req:Request,res:Response)

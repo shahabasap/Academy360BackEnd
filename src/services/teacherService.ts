@@ -2,7 +2,7 @@ import teacherRepository from "../repositories/teacerRepository";
 import { CustomErrorClass } from "../types/CustomError";
 import {ITeacher} from '../types/CommonTypes'
 import fileRepository from "../repositories/fileRepository";
-import {IClassroom} from '../types/CommonTypes'
+
 
 
 
@@ -14,12 +14,7 @@ class teacherService {
        return home
   }
 
-  // Classrooms----------
-  async classroom(data:IClassroom,user:ITeacher) {
-     const home=teacherRepository.createClassroom(data,user)
-       return home
-  }
-
+ 
 
 // Profile services------------------
   async profile(id:string) {

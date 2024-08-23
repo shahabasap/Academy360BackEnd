@@ -5,17 +5,18 @@ import {IClassroom} from '../types/CommonTypes'
 
 const ClassroomSchema: Schema = new Schema({
   subject: { type: String, required: true },
+  classroomid: { type: String, required: true },
   description: { type: String, required: true },
-  teacherid: {type:mongoose.Schema.Types.ObjectId,ref:'Teacher',require:true},
-  createdAt: { type: Date, default: Date.now },
-  updatedAt: { type: Date, default: Date.now },
-  studentsid:[{type:mongoose.Schema.Types.ObjectId,ref:'Student',require:false}],
-  examsid:[{type:mongoose.Schema.Types.ObjectId,ref:'Exams',require:false}],
-  worksid:[{type:mongoose.Schema.Types.ObjectId,ref:'Works',require:false}],
-  materialsid:[{type:mongoose.Schema.Types.ObjectId,ref:'Materials',require:false}],
-  announcementsid:[{type:mongoose.Schema.Types.ObjectId,ref:'Announcements',require:false}],
-
-});
+  teacherid: { type: mongoose.Schema.Types.ObjectId, ref: 'Teacher', required: true },
+  students: [{
+    studentid: { type: mongoose.Schema.Types.ObjectId, ref: 'Student', required: false },
+    IsAdded: { type: Boolean, required: false, default: false }
+  }],
+  examsid: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Exams', required: false }],
+  worksid: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Works', required: false }],
+  materialsid: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Materials', required: false }],
+  announcementsid: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Announcements', required: false }]
+}, { timestamps: true }); 
 
 const Classroom = mongoose.model<IClassroom>('Classroom', ClassroomSchema);
 export default Classroom;
