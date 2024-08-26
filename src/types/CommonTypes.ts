@@ -62,17 +62,23 @@ type Experience = {
 // classroom-------------------------------
 export interface IClassroom extends Document {
     subject: string;
-    classroomid:string;
+    classroomid: string;
     description: string;
     createdAt: Date;
     updatedAt: Date;
-    teacherid ? :mongoose.Types.ObjectId;
-    students ?:StudentData[];
-    examsid ?:mongoose.Types.ObjectId[];
-    materialsid ?:mongoose.Types.ObjectId[];
-    worksid ?:mongoose.Types.ObjectId[];
-    announcementsid ?:mongoose.Types.ObjectId[];
-  
+    teacherid?: ITeacher | mongoose.Types.ObjectId; // Can be an ITeacher object or an ID
+    students?: StudentData[];
+    examsid?: mongoose.Types.ObjectId[];
+    materialsid?: mongoose.Types.ObjectId[];
+    worksid?: mongoose.Types.ObjectId[];
+    announcementsid?: mongoose.Types.ObjectId[];
+    Is_blocked: boolean;
+}
+  export interface ClassCreating{
+    subject: string;
+    description: string;
+    teacherid?: string; // Make it optional in case it's not always present
+    classroomid?:string;
   }
 
   export type StudentData={

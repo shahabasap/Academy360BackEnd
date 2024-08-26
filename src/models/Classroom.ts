@@ -7,6 +7,7 @@ const ClassroomSchema: Schema = new Schema({
   subject: { type: String, required: true },
   classroomid: { type: String, required: true },
   description: { type: String, required: true },
+  Is_blocked: { type: Boolean,default:false },
   teacherid: { type: mongoose.Schema.Types.ObjectId, ref: 'Teacher', required: true },
   students: [{
     studentid: { type: mongoose.Schema.Types.ObjectId, ref: 'Student', required: false },

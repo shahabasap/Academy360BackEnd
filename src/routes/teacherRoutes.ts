@@ -14,8 +14,14 @@ router.put('/profile/:id',autMiddleware.TeacherAuthenticateToken, upload.single(
 router.get('/profile/:id',autMiddleware.TeacherAuthenticateToken,  teacherController.profile);
 
 // classrooms routes--------
-router.post('/classroom',autMiddleware.TeacherAuthenticateToken,  classroomController.classroom);
-router.get('/addStudent',autMiddleware.TeacherAuthenticateToken,  classroomController.AddStudent);
+router.post('/classroom',autMiddleware.TeacherAuthenticateToken,  classroomController.createClassroom);
+router.get('/addStudent',autMiddleware.TeacherAuthenticateToken,  classroomController.addStudent);
+router.get('/classrooms/:id',autMiddleware.TeacherAuthenticateToken,  classroomController.fetchTeacherClassrooms);
+router.post('/joinclassroom',autMiddleware.TeacherAuthenticateToken,  classroomController.teacherJoinToClassroom);
+router.post('/students',autMiddleware.TeacherAuthenticateToken,  classroomController.searchStudents);
+
+
+
 
 
 
