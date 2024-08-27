@@ -22,6 +22,11 @@ class AuthRepository {
         }
     }
     // Teacher Repo-------
+    async TeacherIsBlocked(studentid:string){
+        const student=await Teacher.findOne({ _id:studentid,Is_verified:true,Is_block:false }).exec();
+        return student
+    }
+
 
     async TeacherLogin(data: { username: string; password: string }) {
         try {
@@ -99,7 +104,11 @@ class AuthRepository {
 
 
     // Student repo---------------------
-
+    async StudentIsBlocked(studentid:string){
+        const student=await Student.findOne({_id:studentid,Is_block:false,is_verified:true}).exec();
+        return student
+    }
+    
     async AddNewStudent(data: { name: string; username: string; password: string }) {
         try {
 

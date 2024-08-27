@@ -11,6 +11,7 @@ export default interface IAdmin extends Document{
     }
 // Student Types--------
     export interface IStudent extends Document{
+      _id ?:string,
         name:string,
         username:string,
         gender ?:string,
@@ -20,7 +21,7 @@ export default interface IAdmin extends Document{
         Is_block:boolean,
         photo ?:string,
         is_verified:boolean,
-        class_id ?:mongoose.Schema.Types.ObjectId,
+        classrooms ?:mongoose.Schema.Types.ObjectId[],
         isGoogleSign?:boolean,
         resetPasswordToken?:string | null,
         resetPasswordExpires?:number |null,

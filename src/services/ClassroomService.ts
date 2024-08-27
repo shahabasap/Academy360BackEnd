@@ -4,6 +4,8 @@ import { IClassroom, StudentData ,ClassCreating} from '../types/CommonTypes';
 import mongoose from 'mongoose';
 import generateClassroomId from '../utils/classroomid';
 import { studentInvitationMail } from '../utils/email';
+import studentRepository from '../repositories/studentRepository';
+import Student from '../models/Student';
 
 class ClassroomService {
   async createClassroom(data: ClassCreating) {
@@ -17,6 +19,11 @@ class ClassroomService {
 
   async fetchTeacherClassrooms(id: string) {
     const classrooms = await ClassroomRepository.findTeacherClassrooms(id);
+    return classrooms;
+  }
+  
+  async fetchStudentClassrooms(id: string) {
+    const classrooms = await studentRepository.findStudentClassrooms(id);
     return classrooms;
   }
 
@@ -53,7 +60,7 @@ class ClassroomService {
             await studentInvitationMail(data);
         }
 
-        return { message: `${student.name} added to your classroom` };
+        return { message: `${student.name} added to your classroom ,Invitation Sented to ${student.username}` };
     } else {
         throw new CustomErrorClass("Classroom not found or student already in classroom", 404);
     }
@@ -80,15 +87,38 @@ async searchStudents(data:{username:string,classroomid:string},page:number,limit
     return classroom;
   }
 
-  async joinClassroom(data: { classroomid: string }) {
-    const classroom = await ClassroomRepository.findClassroomById(new mongoose.Types.ObjectId(data.classroomid));
+  async joinClassroom(data: { classroomid: string, studentid: string }) {
+    const { classroomid, studentid } = data;
+  
+    // Check if the student is suspended or does not have access to the classroom
+    const notAdded = await ClassroomRepository.findIsValidStudent(classroomid, studentid);
+    if (notAdded) {
+      throw new CustomErrorClass('You are suspended or do not have access to the classroom.', 403);  // 403 is typically used for forbidden actions
+    }
+  
+    // Find the classroom by the generated ID
+    const classroom = await ClassroomRepository.findClassroomRandomGenarateId(classroomid, studentid);
     if (!classroom) {
       throw new CustomErrorClass('Classroom not found.', 404);
     }
-
-    // Additional logic if required
-    return classroom;
+  
+    // Check if the classroom is already in the student's list
+    const isExist = await studentRepository.classroomAlreadyExist(classroom._id as string, studentid);
+    if (isExist) {
+      throw new CustomErrorClass('This classroom is already in your list.', 409);  // 409 Conflict is suitable here
+    }
+  
+    // Update the student's profile to associate them with the classroom
+    const student = await studentRepository.UpdateStudentProfile(classroom._id as string, studentid);
+    if (!student) {
+      throw new CustomErrorClass('Your classroom was not updated.', 500);
+    }
+  
+    // Return a success message
+    return { message: "Classroom added to your list" };
   }
+  
+
 }
 
 export default new ClassroomService();

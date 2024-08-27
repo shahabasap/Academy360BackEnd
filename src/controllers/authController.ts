@@ -145,7 +145,7 @@ async login(req: Request, res: Response) {
     const StudentData = await AuthService.SignIn(req.body);
     if (StudentData && typeof StudentData !== 'string') {
 
-      AuthUtilities.CreateJwtToken(res,StudentData._id as mongoose.Schema.Types.ObjectId,"JwtStudent")
+      AuthUtilities.CreateJwtToken(res,StudentData._id,"JwtStudent")
 
     }
     res.status(201).json(StudentData);
@@ -182,7 +182,7 @@ async login(req: Request, res: Response) {
         const StudentData=await OtpService.verifyOtp(email, otp);
         if (StudentData && typeof StudentData !== 'string') {
 
-          AuthUtilities.CreateJwtToken(res,StudentData._id as mongoose.Schema.Types.ObjectId,"JwtStudent")
+          AuthUtilities.CreateJwtToken(res,StudentData._id ,"JwtStudent")
     
         }
         res.status(200).json(StudentData);

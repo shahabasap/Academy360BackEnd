@@ -32,6 +32,19 @@ class authService {
   }
 
   // Teacher Services-----
+  async TeacherIsBlocked(studentid:string) {
+    const student = await authRepositories.TeacherIsBlocked(studentid)
+    if(student)
+    {
+     return {valid:true}
+    }
+    else
+    {
+    return {valid:false,message:"User is blocked"}
+
+    }
+}
+
   async TeacherSignIn(data:{username:string,password:string}) {
     const teacher = await authRepositories.TeacherLogin(data);
     
@@ -89,6 +102,20 @@ async TeacherResetPassword(token: string, newPassword: string) {
     }
     return student;
   }
+  async StudentIsBlocked(studentid:string) {
+         const student = await authRepositories.StudentIsBlocked(studentid)
+         if(student)
+         {
+          return {valid:true}
+         }
+         else
+         {
+         return {valid:false,message:"User is blocked"}
+
+         }
+  }
+
+
   
   async SignIn(data:{username:string,password:string}) {
     const student = await authRepositories.login(data);

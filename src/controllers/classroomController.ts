@@ -29,6 +29,20 @@ class ClassroomController {
       res.status(customError.status || 500).json({ error: customError.message });
     }
   }
+  // Fetch classrooms for a specific student
+  async fetchStudentsClassrooms(req: Request, res: Response) {
+    try {
+      const { id } = req.params;
+      if (!id) {
+        throw new CustomErrorClass('Student ID is required', 400);
+      }
+      const classroomData = await ClassroomService.fetchStudentClassrooms(id);
+      res.status(200).json(classroomData);
+    } catch (error) {
+      const customError = error as CustomError;
+      res.status(customError.status || 500).json({ error: customError.message });
+    }
+  }
 
   // Add a student to a classroom
   async addStudent(req: Request, res: Response) {
@@ -72,11 +86,11 @@ class ClassroomController {
   // Student joins a classroom
   async joinClassroom(req: Request, res: Response) {
     try {
-      const { classroomid } = req.body;
+      const { classroomid,studentid } = req.body;
       if (!classroomid) {
         throw new CustomErrorClass('Classroom ID is required', 400);
       }
-      const classroomData = await ClassroomService.joinClassroom({ classroomid });
+      const classroomData = await ClassroomService.joinClassroom({ classroomid,studentid });
       res.status(200).json(classroomData);
     } catch (error) {
       const customError = error as CustomError;

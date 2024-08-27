@@ -14,7 +14,11 @@ router.put('/profile/:id', authMiddleware.authenticateToken,upload.single('profi
 router.get('/profile/:id', authMiddleware.authenticateToken, studentController.profile);
 
 // Classrooms--------------
-router.post('/joinclassroom', authMiddleware.authenticateToken, classroomController.joinClassroom);
+router.post('/addClassroom', authMiddleware.authenticateToken, classroomController.joinClassroom);
+router.get('/fetchStudentsClassrooms/:id', authMiddleware.authenticateToken, classroomController.fetchStudentsClassrooms);
+router.get('/joinClassroom/:id', authMiddleware.authenticateToken, classroomController.fetchStudentsClassrooms);
+
+
 
 
 

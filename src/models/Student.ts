@@ -12,11 +12,12 @@ const StudentSchema:Schema=new Schema({
     Is_block:{type:Boolean,default:false},
     photo:{type:String,require:false},
     is_verified:{type:Boolean,default:false},
-    class_id:{type:mongoose.Schema.Types.ObjectId,ref:'Classroom',required:false},
+    classrooms:[{type:mongoose.Schema.Types.ObjectId,ref:'Classroom'}],
     isGoogleSign: {type:String,default:false,require:false},
     resetPasswordToken: { type: String, required: false },
     resetPasswordExpires: { type: Date, required: false },
     role:{type:String,default:"Student"}
+    
 })
 
 const Student=mongoose.model<IStudent>('Student',StudentSchema)

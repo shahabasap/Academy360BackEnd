@@ -23,14 +23,19 @@ class ClassroomRepository {
     const classrooms = await Classroom.find({ teacherid: id }).exec();
     return classrooms;
   }
+  
 
   async findStudentById(studentid: mongoose.Types.ObjectId): Promise<IStudent | null> {
     const student = await Student.findById(studentid);
     return student;
   }
 
-  async findClassroomById(classroomid: mongoose.Types.ObjectId): Promise<IClassroom | null> {
-    const classroom = await Classroom.findById(classroomid);
+  async findIsValidStudent(classroomid: string,studentid:string): Promise<IClassroom | null> {
+    const classroom = await Classroom.findOne({classroomid,'students.studentid': studentid,'students.IsAdded':false});
+    return classroom;
+  }
+  async findClassroomRandomGenarateId(classroomid: string,studentid:string): Promise<IClassroom | null> {
+    const classroom = await Classroom.findOne({classroomid,'students.studentid': studentid});
     return classroom;
   }
 
@@ -43,6 +48,7 @@ class ClassroomRepository {
     const classroom = await Classroom.findOne({ _id: classroomid}).populate('teacherid');
     return classroom;
   }
+
 
   async addStudentToClassroom(classroomid: mongoose.Types.ObjectId, studentData: StudentData): Promise<any> {
     const updateResult = await Classroom.updateOne(
@@ -103,11 +109,11 @@ async searchStudents(
   const studentCount = await Student.countDocuments(query);
 
   // Fetch the matching students from the database
-  const studentsData = await Student.find(query, { _id: 0, username: 1, name: 1 })
+  const studentsData = await Student.find(query, { _id: 1, username: 1, name: 1 })
     .skip(skip)
     .limit(limit)
     .exec();
-
+ 
   return { Students: studentsData, StudentCount: studentCount };
 }
 

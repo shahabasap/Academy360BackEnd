@@ -1,6 +1,8 @@
 import Student from "../models/Student";
 import { CustomError,CustomErrorClass } from '../types/CustomError';
-import {IStudent} from '../types/CommonTypes'
+import {IStudent,IClassroom} from '../types/CommonTypes'
+import mongoose from "mongoose";
+const { ObjectId } = mongoose.Types;
 
 
 
@@ -24,6 +26,38 @@ async findProfileDetails(id:string) {
   async updateProfile(id: string, data: Partial<IStudent>) {
     return Student.updateOne({ _id: id }, data);
   }
+
+  async classroomAlreadyExist(classroomid: string, studentid: string): Promise<any> {
+    const classroomObjectId = new mongoose.Types.ObjectId(classroomid);
+
+    const classroom = await Student.findOne({ _id: studentid, classrooms: { $in: [classroomObjectId] } });
+    return classroom;
 }
+
+  async UpdateStudentProfile(classroomid:string,studentid:string): Promise<any> {
+    const classroomObjectId = new mongoose.Types.ObjectId(classroomid);
+   
+
+    const classroom = await Student.updateOne({ _id: studentid},{$addToSet:{classrooms:classroomObjectId}});
+    return classroom;
+  }
+  async findStudentClassrooms(id: string): Promise<any> {
+    const student = await Student.findOne({ _id: id }).populate('classrooms').exec();
+    
+    if (!student) {
+        throw new Error('Student not found');
+    }
+
+    return student.classrooms;  // This will return the populated classrooms array
+}
+
+  
+}
+
+
+
+
+
+
 
 export default new StudentRepository();
