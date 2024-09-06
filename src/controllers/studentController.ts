@@ -55,6 +55,26 @@ class StudentController {
       
     }
   }
+  async updateProfilepic(req: Request, res: Response) {
+    const { id } = req.params;
+    const { file } = req;
+
+    try {
+      const result = await studentService.updateProfilePic(id,file?.path);
+      return res.status(200).json({
+        success: true,
+        message: 'Profile updated successfully',
+        data: result,
+      });
+    } catch (error) {
+      console.log("Error Right here",error)
+      return res.status(500).json({
+        success: false,
+        message: 'An error occurred while updating the profile',
+      });
+      
+    }
+  }
 }
 
 export default new StudentController();

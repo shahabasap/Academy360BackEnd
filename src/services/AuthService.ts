@@ -49,7 +49,7 @@ class authService {
     const teacher = await authRepositories.TeacherLogin(data);
     
     if (!teacher || teacher instanceof CustomErrorClass) {
-      throw new CustomErrorClass("Email and Password is not match", 401);
+      throw new CustomErrorClass('Account not verified. Please verify your account to access this resource.', 403);
     }
       const comparePassword=await AuthUtilities.comparePassword(data.password,teacher.password as string)
       if(comparePassword)
@@ -119,6 +119,9 @@ async TeacherResetPassword(token: string, newPassword: string) {
   
   async SignIn(data:{username:string,password:string}) {
     const student = await authRepositories.login(data);
+   
+     
+
     if (student && typeof student !== 'string') {
       const comparePassword=await AuthUtilities.comparePassword(data.password,student.password as string)
       if(comparePassword)
@@ -133,7 +136,7 @@ async TeacherResetPassword(token: string, newPassword: string) {
 
     }
     else{
-      throw new CustomErrorClass("Email and Password  is not match",401 );
+      throw new CustomErrorClass('Account not verified. Please verify your account to access this resource.', 403);
       
     }
  

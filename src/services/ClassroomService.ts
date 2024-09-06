@@ -14,7 +14,7 @@ class ClassroomService {
     data.classroomid = randomClassroomId;
 
     const classroom = await ClassroomRepository.createClassroom(data);
-    return { message: 'Classroom created successfully', classroom };
+    return classroom
   }
 
   async fetchTeacherClassrooms(id: string) {
@@ -27,8 +27,10 @@ class ClassroomService {
     return classrooms;
   }
 
+//  Teacher adding student to classroomm--------------
+
   async  addStudent(classroomid: mongoose.Types.ObjectId, studentid: mongoose.Types.ObjectId) {
-    const student = await ClassroomRepository.findStudentById(studentid);
+    const student = await studentRepository.findStudentById(studentid);
     if (!student) {
         throw new CustomErrorClass("Such student data not found", 404);
     }
@@ -38,7 +40,7 @@ class ClassroomService {
         throw new CustomErrorClass("Student is already in your classroom", 409);
     }
 
-    const studentIdWithStatus: StudentData = { studentid, IsAdded: true };
+    const studentIdWithStatus: StudentData = { studentid, isVerified: true };
     const updateResult = await ClassroomRepository.addStudentToClassroom(classroomid, studentIdWithStatus);
 
     if (updateResult.modifiedCount > 0) {
@@ -67,13 +69,18 @@ class ClassroomService {
 }
 
 // Serching student for adding and inviting to classroom-----------------
-async searchStudents(data:{username:string,classroomid:string},page:number,limit:number){
+async searchStudents(data:{username:string,classroomid:mongoose.Types.ObjectId},page:number,limit:number){
      const JoinedStudents=await ClassroomRepository.getStudentIdsByClassroomId (data.classroomid)
      const students= await ClassroomRepository.searchStudents(data,JoinedStudents,page,limit)
      return students
 }
 
   async teacherJoin(data: { classroomid: mongoose.Types.ObjectId, teacherid: mongoose.Types.ObjectId }) {
+    const isBlock=await ClassroomRepository.findIsBocked(data.classroomid);
+    if(isBlock)
+    {
+      throw new CustomErrorClass('Classroom is blocked by admin', 404);
+    }
     const classroom = await ClassroomRepository.findClassroomByTeacherAndId(data);
 
     if (!classroom) {
@@ -86,8 +93,9 @@ async searchStudents(data:{username:string,classroomid:string},page:number,limit
 
     return classroom;
   }
+  // Add classrooms to students bucket list---------
 
-  async joinClassroom(data: { classroomid: string, studentid: string }) {
+  async addClassroom(data: { classroomid: string, studentid: string }) {
     const { classroomid, studentid } = data;
   
     // Check if the student is suspended or does not have access to the classroom
@@ -104,6 +112,7 @@ async searchStudents(data:{username:string,classroomid:string},page:number,limit
   
     // Check if the classroom is already in the student's list
     const isExist = await studentRepository.classroomAlreadyExist(classroom._id as string, studentid);
+
     if (isExist) {
       throw new CustomErrorClass('This classroom is already in your list.', 409);  // 409 Conflict is suitable here
     }
@@ -117,6 +126,30 @@ async searchStudents(data:{username:string,classroomid:string},page:number,limit
     // Return a success message
     return { message: "Classroom added to your list" };
   }
+  
+  async studentJoinToClassroom(data: { classroomid: string,studentid: string }) {
+    const { classroomid, studentid } = data;
+    const isBlock=await ClassroomRepository.findIsBockedForStudent(data.classroomid);
+    if(isBlock)
+    {
+      throw new CustomErrorClass('Classroom is blocked by admin');
+    }
+
+    // Check if the student is suspended or does not have access to the classroom
+    const student = await ClassroomRepository.findStudentById(classroomid, studentid);
+    if (!student) {
+        throw new CustomErrorClass('You are suspended or do not have access to the classroom.', 403); // 403 is typically used for forbidden actions
+    }
+
+    // Check if the classroom is in the student's classroom list
+    const isExist = await studentRepository.classroomAlreadyExist(classroomid, studentid);
+    if (!isExist) {
+        throw new CustomErrorClass('This classroom is not in your list.', 409); // 409 Conflict is suitable here
+    }
+
+
+    return student;
+}
   
 
 }

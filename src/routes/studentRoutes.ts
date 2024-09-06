@@ -10,13 +10,16 @@ const upload=multer({dest:'uploads/'})
 router.get('/home', authMiddleware.authenticateToken, studentController.home);
 
 // Profile routes------------
-router.put('/profile/:id', authMiddleware.authenticateToken,upload.single('profilePic'), studentController.updateProfile);
+router.put('/profile/:id', authMiddleware.authenticateToken,upload.single('photo'), studentController.updateProfile);
+router.patch('/profile/:id', authMiddleware.authenticateToken,upload.single('photo'), studentController.updateProfilepic);
 router.get('/profile/:id', authMiddleware.authenticateToken, studentController.profile);
 
 // Classrooms--------------
-router.post('/addClassroom', authMiddleware.authenticateToken, classroomController.joinClassroom);
-router.get('/fetchStudentsClassrooms/:id', authMiddleware.authenticateToken, classroomController.fetchStudentsClassrooms);
-router.get('/joinClassroom/:id', authMiddleware.authenticateToken, classroomController.fetchStudentsClassrooms);
+router.post('/addClassroom', authMiddleware.authenticateToken, classroomController.addClassroom);
+router.get('/classrooms/:id', authMiddleware.authenticateToken, classroomController.fetchStudentsClassrooms);
+router.post('/joinClassroom', authMiddleware.authenticateToken, classroomController.studentJoinToClassroom);
+
+
 
 
 

@@ -31,6 +31,46 @@ class adminController{
    
 
   }
+  // Classroom Controllers----------
+  async fetchClassrooms(req: Request, res: Response) {
+    try {
+      const page = parseInt(req.query.page as string) || 1;
+      const pageSize = parseInt(req.query.pageSize as string) || 10;
+      const students = await adminServices.fetchClassrooms(page, pageSize);
+      return res.status(200).json(students);
+    } catch (error) {
+      const customError=error as CustomError
+      res.status(customError.status || 500).json({ error: customError.message });
+    }
+  }
+  async classroomBlock(req:Request,res:Response)
+  {
+    try {
+        const StudentsData= await adminServices.classroomBlock(req.params.id)
+        res.status(200).json(StudentsData)
+        
+    } catch (error) {
+        const customError=error as CustomError
+        res.status(customError.status || 500).json({ error: customError.message });
+    }
+   
+
+  }
+  async classroomUnblock(req:Request,res:Response)
+  {
+    try {
+        const StudentsData= await adminServices.classroomUnblock(req.params.id)
+        res.status(200).json(StudentsData)
+        
+    } catch (error) {
+        const customError=error as CustomError
+        res.status(customError.status || 500).json({ error: customError.message });
+    }
+   
+
+  }
+   
+
   // Student controllers--------------------------
   async getStudents(req: Request, res: Response) {
     try {
@@ -109,6 +149,35 @@ async TeacherUnblock(req:Request,res:Response)
   try {
       const StudentsData= await adminServices.teacherunblock(req.params.id)
       res.status(200).json(StudentsData)
+      
+  } catch (error) {
+      const customError=error as CustomError
+      res.status(customError.status || 500).json({ error: customError.message });
+  }
+ 
+
+}
+async rejectTeacher(req:Request,res:Response)
+{
+  try {
+       const {id}=req.params
+       const {rejectionReason}=req.body
+      const teacher= await adminServices.rejectTeacher(id,rejectionReason)
+      res.status(200).json(teacher)
+      
+  } catch (error) {
+      const customError=error as CustomError
+      res.status(customError.status || 500).json({ error: customError.message });
+  }
+ 
+
+}
+async approveTeacher(req:Request,res:Response)
+{
+  try {
+    const {id}=req.params
+      const teacher= await adminServices.approveTeacher(id)
+      res.status(200).json(teacher)
       
   } catch (error) {
       const customError=error as CustomError

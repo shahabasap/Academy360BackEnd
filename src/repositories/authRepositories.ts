@@ -55,6 +55,7 @@ class AuthRepository {
                 throw new CustomErrorClass("Username is already exists",409);
                 
             }
+         
             const newTeacher = new Teacher(data);
             await newTeacher.save();
             return newTeacher;

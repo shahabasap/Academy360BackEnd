@@ -1,6 +1,13 @@
 import mongoose,{Document,Types} from 'mongoose'
 import Otp from '../models/Otp';
+import Attendance from '../models/attendence';
 
+
+export interface FileUpload {
+  photo?: Express.Multer.File[];
+  ugCertificate?: Express.Multer.File[];
+  pgCertificate?: Express.Multer.File[];
+}
 // Admin Types--
 export default interface IAdmin extends Document{
 
@@ -43,24 +50,47 @@ export interface ITeacher extends Document {
     LastUpdation?: Date;
     Is_block: boolean;
     photo?: string;
-    qualification?: string;
-    Experience?: Experience[];
+    proof?: string;
+    graduation?: Graduation;
+    postGraduation?: Graduation;
+    experiences?: Experience[];
     Is_verified: boolean;
+    ugCertificate?: string;
+    pgCertificate?: string;
     resetPasswordToken?: string | null;
     resetPasswordExpires?: number | null;
-    isGoogleSign?: boolean;  // Updated type to boolean
+    isGoogleSign?: boolean;  
     role: string;
+    Approval: ApprovelType;
     
+}
+type ApprovelType={
+  isApproved:boolean,
+  message:String |null
 }
 
 type Experience = {
-    ExperiencedInstitute?: string;
-    yearOfExperiencefrom?: Date;
-    yearOfExperienceTo?: Date;
+  institute?: string;
+  yearFrom?: Date;
+  yearTo?: Date;
+}
+
+type Graduation = {
+  college?: string;
+  course?: string;
+  yearFrom?: Date;
+  yearTo?: Date;
+
 }
 
 
 // classroom-------------------------------
+export interface PaginatedResult<T> {
+  data: T[];
+  currentPage: number;
+  totalPages: number;
+  totalItems: number;
+}
 export interface IClassroom extends Document {
     subject: string;
     classroomid: string;
@@ -84,7 +114,7 @@ export interface IClassroom extends Document {
 
   export type StudentData={
     studentid:mongoose.Types.ObjectId;
-    IsAdded:boolean
+    isVerified:boolean
   }
 
 //   Otp-------------------------
@@ -92,4 +122,14 @@ export interface Iotp extends Document {
     email: string;
     otp: number;
     expiresAt: Date;
+}
+
+// Attendance-------------------
+export interface IAttendance extends Document {
+  classroomId: Types.ObjectId;
+  Date: Date;
+  AttedenceDataSet: {
+    studentId: Types.ObjectId;
+    status: 'Present' | 'Absent';
+  }[];
 }

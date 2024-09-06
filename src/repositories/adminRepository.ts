@@ -1,13 +1,9 @@
 import Teacher from '../models/Teacher';
 import Student from '../models/Student';
 import { CustomError,CustomErrorClass } from '../types/CustomError';
+import {PaginatedResult} from '../types/CommonTypes';
 
-interface PaginatedResult<T> {
-  data: T[];
-  currentPage: number;
-  totalPages: number;
-  totalItems: number;
-}
+
 
 class adminRepository {
   async dashboard() {
@@ -38,39 +34,37 @@ class adminRepository {
       { $sort: { "_id.year": 1, "_id.month": 1 } }
     ]);
   
-
-  
     const data: { name: string; Students: number; Teachers: number }[] = [];
-const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-
-// Populate the data array
-for (let i = 0; i < 4; i++) {
-  const studentMonthData = studentData[i] || { count: 0, _id: { month: (new Date().getMonth() + 1) - i } };
-  const teacherMonthData = teacherData[i] || { count: 0, _id: { month: (new Date().getMonth() + 1) - i } };
-  data.push({
-    name: months[studentMonthData._id.month - 1],
-    Students: studentMonthData.count,
-    Teachers: teacherMonthData.count
-  });
-}
-
-// Sort the data array by month in ascending order
-data.sort((a, b) => {
-  const monthIndexA = months.indexOf(a.name);
-  const monthIndexB = months.indexOf(b.name);
-  return monthIndexA - monthIndexB;
-});
-
-
-
+    const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
   
- 
-    return {
-      StudentsCount:studentData,
-      TeacherCount:teacherData,
-      CharData:data
+    // Generate a list of the last 4 months
+    const lastFourMonths = [];
+    for (let i = 0; i < 4; i++) {
+      const date = new Date();
+      date.setMonth(date.getMonth() - i);
+      lastFourMonths.push({ month: date.getMonth() + 1, name: months[date.getMonth()], year: date.getFullYear() });
     }
+  
+    // Populate the data array by matching student and teacher data with the last four months
+    lastFourMonths.reverse().forEach(monthData => {
+      const studentMonthData = studentData.find(data => data._id.month === monthData.month && data._id.year === monthData.year);
+      const teacherMonthData = teacherData.find(data => data._id.month === monthData.month && data._id.year === monthData.year);
+  
+      data.push({
+        name: monthData.name,
+        Students: studentMonthData ? studentMonthData.count : 0,
+        Teachers: teacherMonthData ? teacherMonthData.count : 0
+      });
+    });
+  
+    return {
+      StudentsCount: studentData,
+      TeacherCount: teacherData,
+      CharData: data
+    };
   }
+  
+  
   
   // student repo part------------------------
 
@@ -142,6 +136,18 @@ data.sort((a, b) => {
         const customError=error as CustomError
         throw new CustomErrorClass(customError.message, 500)
     }
+  }
+
+  async rejectTeacher(id:string,reason:string)
+  {
+      const updateRejection=await Teacher.updateOne({_id:id},{$set:{'Approvel.message':reason}})
+
+      return updateRejection
+  }
+  async approveTeacher(id:string)
+  {  
+      const updateApproval=await Teacher.updateOne({_id:id},{$set:{'Approvel.isApproved':true,'Approvel.message':null}})
+      return updateApproval
   }
 
   async blockTeacher(id:string) {

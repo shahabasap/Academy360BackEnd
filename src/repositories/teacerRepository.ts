@@ -28,7 +28,11 @@ class teacherRepository {
 
   
   async updateProfile(id: string, data: Partial<ITeacher>) {
-    return Teacher.updateOne({ _id: id }, data);
+   
+    return await Teacher.updateOne({ _id: id }, data);
+  }
+  async updateProfilePic(id: string, data: {photo:string}) {
+    return await Teacher.updateOne({ _id: id }, data);
   }
 
 }

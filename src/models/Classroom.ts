@@ -11,7 +11,7 @@ const ClassroomSchema: Schema = new Schema({
   teacherid: { type: mongoose.Schema.Types.ObjectId, ref: 'Teacher', required: true },
   students: [{
     studentid: { type: mongoose.Schema.Types.ObjectId, ref: 'Student', required: false },
-    IsAdded: { type: Boolean, required: false, default: false }
+    isVerified: { type: Boolean, required: false, default: false }
   }],
   examsid: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Exams', required: false }],
   worksid: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Works', required: false }],

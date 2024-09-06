@@ -26,6 +26,9 @@ async findProfileDetails(id:string) {
   async updateProfile(id: string, data: Partial<IStudent>) {
     return Student.updateOne({ _id: id }, data);
   }
+  async updateProfilePic(id: string, data:{photo:string}) {
+    return Student.updateOne({ _id: id }, data);
+  }
 
   async classroomAlreadyExist(classroomid: string, studentid: string): Promise<any> {
     const classroomObjectId = new mongoose.Types.ObjectId(classroomid);
@@ -49,6 +52,10 @@ async findProfileDetails(id:string) {
     }
 
     return student.classrooms;  // This will return the populated classrooms array
+}
+async findStudentById(studentid: mongoose.Types.ObjectId): Promise<IStudent | null> {
+  const student = await Student.findById({_id:studentid,is_verified:true});
+  return student;
 }
 
   

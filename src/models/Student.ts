@@ -7,7 +7,7 @@ const StudentSchema:Schema=new Schema({
     password:{type:String,required:false},
     username:{type:String,require:true},
     gender:{type:String,require:false},
-    Phone:{type:Number,require:false},
+    phone:{type:Number,require:false},
     Joined: { type: Date, default: Date.now },
     Is_block:{type:Boolean,default:false},
     photo:{type:String,require:false},

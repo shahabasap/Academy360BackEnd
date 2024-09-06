@@ -1,13 +1,15 @@
 import mongoose from 'mongoose';
 import Classroom from '../models/Classroom';
 import Student from '../models/Student';
-import { CustomErrorClass } from '../types/CustomError';
-import { IClassroom, StudentData,IStudent,ClassCreating} from '../types/CommonTypes';
+import { CustomErrorClass,CustomError } from '../types/CustomError';
+import { IClassroom, StudentData,ClassCreating,PaginatedResult} from '../types/CommonTypes';
 
 class ClassroomRepository {
   async createClassroom(data: ClassCreating): Promise<IClassroom> {
     const { subject, teacherid } = data;
-    const subjectRegex = new RegExp(`^${subject}$`, 'i');
+    const trimmedSubject = subject.trim();
+    const subjectRegex = new RegExp(`^${trimmedSubject}$`, 'i');
+
     const existingClassroom = await Classroom.findOne({ subject: subjectRegex, teacherid });
 
     if (existingClassroom) {
@@ -19,19 +21,57 @@ class ClassroomRepository {
     return newClassroom;
   }
 
-  async findTeacherClassrooms(id: string): Promise<IClassroom[]> {
-    const classrooms = await Classroom.find({ teacherid: id }).exec();
+  async findTeacherClassrooms(teacherid: string): Promise<IClassroom[]> {
+    const classrooms = await Classroom.find({ teacherid: teacherid }).exec();
+    return classrooms;
+  }
+  async findByid(id: mongoose.Types.ObjectId): Promise<IClassroom|null> {
+    const classrooms = await Classroom.findOne({_id:id }).exec();
     return classrooms;
   }
   
+  async fetchClassrooms(page: number, pageSize: number): Promise<PaginatedResult<any>> {
+    try {
+      const skip = (page - 1) * pageSize;
+      const totalItems = await Classroom.countDocuments().exec();
+      const totalPages = Math.ceil(totalItems / pageSize);
 
-  async findStudentById(studentid: mongoose.Types.ObjectId): Promise<IStudent | null> {
-    const student = await Student.findById(studentid);
-    return student;
+      const students = await Classroom.find()
+        .skip(skip)
+        .limit(pageSize)
+        .exec();
+
+      return {
+        data: students,
+        currentPage: page,
+        totalPages,
+        totalItems,
+      };
+    } catch (error) {
+      const customError = error as CustomError;
+      throw new CustomErrorClass(customError.message, 500);
+    }
   }
+ 
 
+  async blockClassroom(classroomid: string): Promise<any> {
+    const classroom= await Classroom.updateOne({_id:classroomid},{$set:{Is_blocked:true}})
+    return classroom
+  }
+  async unblockClassroom(classroomid: string): Promise<any> {
+    const classroom= await Classroom.updateOne({_id:classroomid},{$set:{Is_blocked:false}})
+    return classroom
+  }
   async findIsValidStudent(classroomid: string,studentid:string): Promise<IClassroom | null> {
-    const classroom = await Classroom.findOne({classroomid,'students.studentid': studentid,'students.IsAdded':false});
+    const classroom = await Classroom.findOne({classroomid,'students.studentid': studentid,'students.isVerified':false});
+    return classroom;
+  }
+  async findStudentById(classroomid: string,studentid:string): Promise<IClassroom | null> {
+    const classroom = await Classroom.findOne({_id:classroomid,'students.studentid': studentid,'students.isVerified':true});
+    return classroom;
+  }
+  async findIsBockedForStudent(classroomid: string): Promise<IClassroom | null> {
+    const classroom = await Classroom.findOne({_id:classroomid,Is_blocked:true});
     return classroom;
   }
   async findClassroomRandomGenarateId(classroomid: string,studentid:string): Promise<IClassroom | null> {
@@ -63,8 +103,13 @@ class ClassroomRepository {
     const classroom = await Classroom.findOne({ _id: classroomid, teacherid });
     return classroom;
   }
+  async findIsBocked(classroomid:mongoose.Types.ObjectId): Promise<IClassroom | null> {
   
-   async getStudentIdsByClassroomId (classroomid: string): Promise<string[] | null>  {
+    const classroom = await Classroom.findOne({ _id: classroomid,Is_blocked:true });
+    return classroom;
+  }
+  
+   async getStudentIdsByClassroomId (classroomid: mongoose.Types.ObjectId): Promise<string[] | null>  {
 
       // Find the classroom by classroomid
       const classroom = await Classroom.findOne({ _id:classroomid }).exec();
@@ -81,7 +126,7 @@ class ClassroomRepository {
 
 // Searching students by username-----------
 async searchStudents(
-  data: { username: string | null; classroomid: string },
+  data: { username: string | null; classroomid: mongoose.Types.ObjectId },
   Students: null | string[],
   page: number,
   limit: number

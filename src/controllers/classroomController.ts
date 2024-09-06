@@ -7,6 +7,7 @@ class ClassroomController {
   // Create a new classroom
   async createClassroom(req: Request, res: Response) {
     try {
+ 
       const classroomData = await ClassroomService.createClassroom(req.body.data);
       res.status(200).json(classroomData);
     } catch (error) {
@@ -83,20 +84,34 @@ class ClassroomController {
   }
   
 
-  // Student joins a classroom
-  async joinClassroom(req: Request, res: Response) {
+  // Add classrooms into students bucket list
+  async addClassroom(req: Request, res: Response) {
     try {
       const { classroomid,studentid } = req.body;
       if (!classroomid) {
         throw new CustomErrorClass('Classroom ID is required', 400);
       }
-      const classroomData = await ClassroomService.joinClassroom({ classroomid,studentid });
+      const classroomData = await ClassroomService.addClassroom({ classroomid,studentid });
       res.status(200).json(classroomData);
     } catch (error) {
       const customError = error as CustomError;
       res.status(customError.status || 500).json({ error: customError.message });
     }
   }
+  async studentJoinToClassroom(req: Request, res: Response) {
+    try {
+      const { classroomid,studentid } = req.body;
+      if (!classroomid) {
+        throw new CustomErrorClass('Classroom ID is required', 400);
+      }
+      const classroomData = await ClassroomService.studentJoinToClassroom({ classroomid,studentid });
+      res.status(200).json(classroomData);
+    } catch (error) {
+      const customError = error as CustomError;
+      res.status(customError.status || 500).json({ error: customError.message });
+    }
+  }
+
 }
 
 export default new ClassroomController();

@@ -1,4 +1,5 @@
 import adminRepository from "../repositories/adminRepository";
+import ClassroomRepository from "../repositories/ClassroomRepository";
 
 import { CustomErrorClass } from "../types/CustomError";
 
@@ -14,6 +15,31 @@ class adminServices {
   return dashboard
 
   }
+  // classroom Services-------------------
+  async fetchClassrooms(page: number, pageSize: number) {
+    return await ClassroomRepository.fetchClassrooms(page, pageSize);
+  }
+  
+  async classroomBlock(id: string) {
+    const result = await ClassroomRepository.blockClassroom(id);
+  
+    if (result.modifiedCount > 0) {
+      return true;
+    } else {
+      throw new Error("Failed to block the classroom.");
+    }
+  }
+  
+  async classroomUnblock(id: string) {
+    const result = await ClassroomRepository.unblockClassroom(id);
+  
+    if (result.modifiedCount > 0) {
+      return true;
+    } else {
+      throw new Error("Failed to unblock the classroom.");
+    }
+  }
+  
 //  Student Services------------------
 
 async getVerifiedStudents(page: number, pageSize: number) {
@@ -39,6 +65,28 @@ async getVerifiedStudents(page: number, pageSize: number) {
     return  await adminRepository.getVerifiedTeachers(page,pageSize)
 
   }
+  
+  async rejectTeacher(id: string, reason: string) {
+    const result = await adminRepository.rejectTeacher(id, reason);
+
+    if (result.modifiedCount < 1) {  // Checking if no documents were modified
+        throw new Error(`Failed to reject teacher with ID ${id}. No documents were updated.`);
+    }
+
+    return result;
+}
+
+async approveTeacher(id: string) {
+    const result = await adminRepository.approveTeacher(id);
+
+    if (result.modifiedCount < 1) {  // Checking if no documents were modified
+        throw new Error(`Failed to approve teacher with ID ${id}. No documents were updated.`);
+    }
+
+    return result;
+}
+
+
 
 async teacherblock(id:string) {
   const isBlocked = await adminRepository.blockTeacher(id);

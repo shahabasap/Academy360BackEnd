@@ -14,3 +14,9 @@ export const uploadImage = async (filePath: string) => {
     folder: 'profile_pics',
   });
 };
+export const uploadQualification = async (filePath: string) => {
+  return cloudinary.uploader.upload(filePath, {
+    folder: 'certificates',
+    resource_type: 'auto',  // 'auto' automatically detects the file type and handles it correctly
+  });
+};
