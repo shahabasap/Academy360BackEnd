@@ -8,30 +8,33 @@ import { upload } from '../config/multer';
 const router = Router();
 
 
+const role=process.env.Teacher_Role as string
 
-router.get('/home',autMiddleware.TeacherAuthenticateToken,teacherController.home);
+
+
+router.get('/home',autMiddleware.authenticateToken(role),teacherController.home);
 
 // Profile routes------------------------------
-router.put('/profile/:id', autMiddleware.TeacherAuthenticateToken, upload.fields([
+router.put('/profile/:id', autMiddleware.authenticateToken(role), upload.fields([
     { name: 'photo', maxCount: 1 },
     { name: 'ugCertificate', maxCount: 1 },
     { name: 'pgCertificate', maxCount: 1 },
   ]), teacherController.updateProfile);
 
-router.patch('/profile-pic/:id',autMiddleware.TeacherAuthenticateToken,upload.single('profilePic'),  teacherController.profilePic);
-router.get('/profile/:id',autMiddleware.TeacherAuthenticateToken,  teacherController.profile);
+router.patch('/profile-pic/:id',autMiddleware.authenticateToken(role),upload.single('profilePic'),  teacherController.profilePic);
+router.get('/profile/:id',autMiddleware.authenticateToken(role),  teacherController.profile);
 
 // classrooms routes--------
-router.post('/classroom',autMiddleware.TeacherAuthenticateToken,  classroomController.createClassroom);
-router.get('/addStudent',autMiddleware.TeacherAuthenticateToken,  classroomController.addStudent);
-router.get('/classrooms/:id',autMiddleware.TeacherAuthenticateToken,  classroomController.fetchTeacherClassrooms);
-router.post('/joinclassroom',autMiddleware.TeacherAuthenticateToken,  classroomController.teacherJoinToClassroom);
-router.post('/students',autMiddleware.TeacherAuthenticateToken,  classroomController.searchStudents);
+router.post('/classroom',autMiddleware.authenticateToken(role),  classroomController.createClassroom);
+router.get('/addStudent',autMiddleware.authenticateToken(role),  classroomController.addStudent);
+router.get('/classrooms/:id',autMiddleware.authenticateToken(role),  classroomController.fetchTeacherClassrooms);
+router.post('/joinclassroom',autMiddleware.authenticateToken(role),  classroomController.teacherJoinToClassroom);
+router.post('/students',autMiddleware.authenticateToken(role),  classroomController.searchStudents);
 
 
-router.post('/attendence',autMiddleware.TeacherAuthenticateToken,  attendenceController.DayAttendence);
-router.patch('/attendence',autMiddleware.TeacherAuthenticateToken,  attendenceController.MarkAttendence);
-router.get('/attendence',autMiddleware.TeacherAuthenticateToken,  attendenceController.AttendenceHistory);
+router.post('/attendence',autMiddleware.authenticateToken(role),  attendenceController.DayAttendence);
+router.patch('/attendence',autMiddleware.authenticateToken(role),  attendenceController.MarkAttendence);
+router.get('/attendence',autMiddleware.authenticateToken(role),  attendenceController.AttendenceHistory);
 
 
 

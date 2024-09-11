@@ -26,7 +26,12 @@ class ClassroomRepository {
     return classrooms;
   }
   async findByid(id: mongoose.Types.ObjectId): Promise<IClassroom|null> {
-    const classrooms = await Classroom.findOne({_id:id }).exec();
+    const classrooms = await Classroom.findOne({_id:id }).populate('teacherid').exec();
+    return classrooms;
+  }
+  
+  async findByClassId(classroomId: string): Promise<IClassroom|null> {
+    const classrooms = await Classroom.findOne({classroomid:classroomId }).populate('teacherid').exec();
     return classrooms;
   }
   
@@ -62,8 +67,12 @@ class ClassroomRepository {
     const classroom= await Classroom.updateOne({_id:classroomid},{$set:{Is_blocked:false}})
     return classroom
   }
-  async findIsValidStudent(classroomid: string,studentid:string): Promise<IClassroom | null> {
-    const classroom = await Classroom.findOne({classroomid,'students.studentid': studentid,'students.isVerified':false});
+  async findIsValidStudentObjectId(classroomid: string,studentid:string): Promise<IClassroom | null> {
+    const classroom = await Classroom.findOne({_id:classroomid,'students.studentid': studentid,'students.isVerified':false});
+    return classroom;
+  }
+  async findIsValidStudentClassId(classroomid: string,studentid:string): Promise<IClassroom | null> {
+    const classroom = await Classroom.findOne({classroomid:classroomid,'students.studentid': studentid,'students.isVerified':true});
     return classroom;
   }
   async findStudentById(classroomid: string,studentid:string): Promise<IClassroom | null> {
@@ -74,8 +83,8 @@ class ClassroomRepository {
     const classroom = await Classroom.findOne({_id:classroomid,Is_blocked:true});
     return classroom;
   }
-  async findClassroomRandomGenarateId(classroomid: string,studentid:string): Promise<IClassroom | null> {
-    const classroom = await Classroom.findOne({classroomid,'students.studentid': studentid});
+  async findClassroomById(classroomid: string,studentid:string): Promise<IClassroom | null> {
+    const classroom = await Classroom.findOne({_id:classroomid,'students.studentid': studentid});
     return classroom;
   }
 

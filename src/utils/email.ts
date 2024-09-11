@@ -43,7 +43,7 @@ export const studentInvitationMail = async (data: any): Promise<void> => {
         });
 
         // Destructure the data object
-        const {studentname, email, classroomId, subject, teacherName } = data;
+        const {studentId,studentname, email, classroomId, subject, teacherName } = data;
 
         // Define the email options
         const mailOptions = {
@@ -59,6 +59,8 @@ export const studentInvitationMail = async (data: any): Promise<void> => {
                 Teacher: ${teacherName}
 
                 Your classroom Id is ${classroomId}.
+                http://localhost:5173/unlock-classroom/?classroomid=${classroomId}&studentid=${studentId}
+
 
                 Please use this classroom id to join the session,never missout it.
 

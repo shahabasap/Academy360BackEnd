@@ -43,7 +43,7 @@ const TeacherSchema: Schema = new Schema({
         isApproved: { type: Boolean, default: false },
         message: { type: String,default: null},
     },
-    role: { type: String, default: "Teacher" },
+    role: { type: String, default: "teacher" },
 });
 
 const Teacher = mongoose.model<ITeacher>('Teacher', TeacherSchema);

@@ -17,17 +17,14 @@ const saltRounds = 10;
         const isMatch= await bcrypt.compare(plainPassword,hashedPassword)
         return isMatch
       }
-      async CreateJwtToken(res:Response,userdata:mongoose.Schema.Types.ObjectId | string,TokenName:string):Promise<void>{
-        const token=jwt.sign({userdata},process.env.JWT_SECRET as string,{expiresIn:'30d'});
-        res.cookie(TokenName,token,{
-            httpOnly:true,
-            secure:process.env.NODE_ENV != 'development',
-            sameSite:'strict',
-            maxAge:30*24*60*60*1000
-        })
+      async CreateJwtToken(userId:string,role:string):Promise<{ accessToken: string, refreshToken: string }>{
+        const accessToken =jwt.sign({userId,role},process.env.ACCESS_TOKEN_SECRET as string,{expiresIn: '1m'});
+        const refreshToken =jwt.sign({userId,role},process.env.REFRESH_TOKEN_SECRET as string,{expiresIn:'30d'});
+        return { accessToken, refreshToken };
       }
+     
       
-
+ 
 }
 
 export default new AuthUtilities()

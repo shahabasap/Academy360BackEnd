@@ -17,7 +17,20 @@ class authController{
       const AdminData = await AuthService.AdminSignIn(req.body);
       if (AdminData && typeof AdminData !== 'string') {
   
-        AuthUtilities.CreateJwtToken(res,AdminData._id as mongoose.Schema.Types.ObjectId,"JwtAdmin")
+        const{accessToken, refreshToken }=await AuthUtilities.CreateJwtToken(AdminData._id as string,AdminData.role as string)
+        res.cookie(`access-token-${AdminData.role}`, accessToken, {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === 'production',
+          maxAge: 15 * 60 * 1000  // expires in 15 minutes
+          
+        })
+  
+        res.cookie(`refresh-token-${AdminData.role}`, refreshToken, {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === 'production',
+          maxAge: 30 * 24 * 60 * 60 * 1000  // expires in 30days
+          
+        })
   
       }
       res.status(201).json(AdminData);
@@ -28,7 +41,11 @@ class authController{
   }
   async AdminLogout(req: Request, res: Response) {
     try {
-      res.cookie('JwtAdmin','',{
+      res.cookie('refresh-token-admin','',{
+       httpOnly:true,
+       expires:new Date(0)
+      })
+      res.cookie('access-token-admin','',{
        httpOnly:true,
        expires:new Date(0)
       })
@@ -47,7 +64,21 @@ class authController{
         const TeacherData = await AuthService.TeacherSignIn(req.body);
         if (TeacherData && typeof TeacherData !== 'string') {
     
-          AuthUtilities.CreateJwtToken(res,TeacherData._id as mongoose.Schema.Types.ObjectId,"JwtTeacher")
+         const{accessToken,refreshToken}=await  AuthUtilities.CreateJwtToken(TeacherData._id as string,TeacherData.role as string)
+          res.cookie(`access-token-${TeacherData.role}`, accessToken, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            maxAge: 15 * 60 * 1000  // expires in 15 minutes
+            
+          })
+    
+          res.cookie(`refresh-token-${TeacherData.role}`, refreshToken, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            maxAge: 30 * 24 * 60 * 60 * 1000  // expires in 30days
+            
+          })
+    
     
         }
     
@@ -91,7 +122,20 @@ class authController{
         const TeacherData= await OtpService.TeacherVerifyOtp(email, otp);
         if (TeacherData && typeof TeacherData !== 'string') {
     
-          AuthUtilities.CreateJwtToken(res,TeacherData._id as mongoose.Schema.Types.ObjectId,"JwtTeacher")
+          const{accessToken,refreshToken}=await  AuthUtilities.CreateJwtToken(TeacherData._id as string,TeacherData.role as string)
+          res.cookie(`access-token-${TeacherData.role}`, accessToken, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            maxAge: 15 * 60 * 1000  // expires in 15 minutes
+            
+          })
+    
+          res.cookie(`refresh-token-${TeacherData.role}`, refreshToken, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            maxAge: 30 * 24 * 60 * 60 * 1000  // expires in 30days
+            
+          })
     
         }
         res.status(200).json(TeacherData);
@@ -103,7 +147,11 @@ class authController{
 
   async TeacherLogout(req: Request, res: Response) {
     try {
-      res.cookie('JwtTeacher','',{
+      res.cookie('access-token-teacher','',{
+       httpOnly:true,
+       expires:new Date(0)
+      })
+      res.cookie('refresh-token-teacher','',{
        httpOnly:true,
        expires:new Date(0)
       })
@@ -145,7 +193,20 @@ async login(req: Request, res: Response) {
     const StudentData = await AuthService.SignIn(req.body);
     if (StudentData && typeof StudentData !== 'string') {
 
-      AuthUtilities.CreateJwtToken(res,StudentData._id,"JwtStudent")
+     const{accessToken,refreshToken}=await AuthUtilities.CreateJwtToken(StudentData._id as string ,StudentData.role as string)
+      res.cookie(`access-token-${StudentData.role}`, accessToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        maxAge: 15 * 60 * 1000  // expires in 15 minutes
+        
+      })
+
+      res.cookie(`refresh-token-${StudentData.role}`, refreshToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        maxAge: 30 * 24 * 60 * 60 * 1000  // expires in 30days
+        
+      })
 
     }
     res.status(201).json(StudentData);
@@ -182,7 +243,22 @@ async login(req: Request, res: Response) {
         const StudentData=await OtpService.verifyOtp(email, otp);
         if (StudentData && typeof StudentData !== 'string') {
 
-          AuthUtilities.CreateJwtToken(res,StudentData._id ,"JwtStudent")
+          
+     const{accessToken,refreshToken}=await AuthUtilities.CreateJwtToken(StudentData._id as string ,StudentData.role as string)
+     res.cookie(`access-token-${StudentData.role}`, accessToken, {
+       httpOnly: true,
+       secure: process.env.NODE_ENV === 'production',
+       maxAge: 15 * 60 * 1000  // expires in 15 minutes
+       
+     })
+
+     res.cookie(`refresh-token-${StudentData.role}`, refreshToken, {
+       httpOnly: true,
+       secure: process.env.NODE_ENV === 'production',
+       maxAge: 30 * 24 * 60 * 60 * 1000  // expires in 30days
+       
+     })
+     
     
         }
         res.status(200).json(StudentData);
@@ -204,13 +280,21 @@ async logout(req: Request, res: Response) {
 async googleAuthentication(req: Request, res: Response) {
   try {
     const user=await AuthService.googleAuth(req.body)
-    if(user.role=="Student")
-    {
-      AuthUtilities.CreateJwtToken(res,user._id as mongoose.Schema.Types.ObjectId,"JwtStudent")
-    }else if(user.role=="Teacher")
-    {
-      AuthUtilities.CreateJwtToken(res,user._id as mongoose.Schema.Types.ObjectId,"JwtTeacher")
-    }
+    const{accessToken, refreshToken }=await AuthUtilities.CreateJwtToken(user._id as string,user.role as string)
+      res.cookie(`access-token-${user.role}`, accessToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        maxAge: 15 * 60 * 1000  // expires in 15 minutes
+        
+      })
+
+      res.cookie(`refresh-token-${user.role}`, refreshToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        maxAge: 30 * 24 * 60 * 60 * 1000  // expires in 30days
+        
+      })
+
     res.status(200).json(user)
      
  } catch (error) {
@@ -244,7 +328,11 @@ async studentResetPassword(req: Request, res: Response) {
 }
 async StudentLogout(req: Request, res: Response) {
   try {
-    res.cookie('JwtStudent','',{
+    res.cookie('refresh-token-student','',{
+     httpOnly:true,
+     expires:new Date(0)
+    })
+    res.cookie('access-token-student','',{
      httpOnly:true,
      expires:new Date(0)
     })

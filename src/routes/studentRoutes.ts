@@ -1,29 +1,29 @@
 import { Router } from 'express';
-import authMiddleware from '../middlewares/autMiddleware'; // Adjust path as needed
+import authMiddleware from '../middlewares/autMiddleware';
 import studentController from '../controllers/studentController';
-import multer from 'multer'
+import multer from 'multer';
 import classroomController from '../controllers/classroomController';
 
 const router = Router();
-const upload=multer({dest:'uploads/'})
+const upload = multer({ dest: 'uploads/' });
 
-router.get('/home', authMiddleware.authenticateToken, studentController.home);
-
-// Profile routes------------
-router.put('/profile/:id', authMiddleware.authenticateToken,upload.single('photo'), studentController.updateProfile);
-router.patch('/profile/:id', authMiddleware.authenticateToken,upload.single('photo'), studentController.updateProfilepic);
-router.get('/profile/:id', authMiddleware.authenticateToken, studentController.profile);
-
-// Classrooms--------------
-router.post('/addClassroom', authMiddleware.authenticateToken, classroomController.addClassroom);
-router.get('/classrooms/:id', authMiddleware.authenticateToken, classroomController.fetchStudentsClassrooms);
-router.post('/joinClassroom', authMiddleware.authenticateToken, classroomController.studentJoinToClassroom);
+// Define student role (can be from environment or hardcoded for now)
+const studentRole = process.env.Student_Role as string;
 
 
+// Home route (for student)
+router.get('/home', authMiddleware.authenticateToken(studentRole), studentController.home);
 
+// Profile routes
+router.put('/profile/:id', authMiddleware.authenticateToken(studentRole), upload.single('photo'), studentController.updateProfile);
+router.patch('/profile/:id', authMiddleware.authenticateToken(studentRole), upload.single('photo'), studentController.updateProfilepic);
+router.get('/profile/:id', authMiddleware.authenticateToken(studentRole), studentController.profile);
 
-
-
-
+// Classrooms
+router.post('/addClassroom', authMiddleware.authenticateToken(studentRole), classroomController.addClassroom);
+router.get('/classrooms/:id', authMiddleware.authenticateToken(studentRole), classroomController.fetchStudentsClassrooms);
+router.post('/joinClassroom', authMiddleware.authenticateToken(studentRole), classroomController.studentJoinToClassroom);
+router.get('/classroom/:id', authMiddleware.authenticateToken(studentRole), classroomController.fetchClassroom);
+router.get('/classroom-lock', authMiddleware.authenticateToken(studentRole), classroomController.isLocked);
 
 export default router;

@@ -1,112 +1,119 @@
 import jwt from 'jsonwebtoken';
-import { Response, NextFunction,Request } from 'express';
+import { Response, NextFunction, Request } from 'express';
 import Student from '../models/Student';
 import Teacher from '../models/Teacher';
-import {ITeacher} from '../types/CommonTypes'
-import { CustomJwtPayload } from '../types/CustomRequest';
 import Admin from '../models/admin';
-import IAdmin from '../types/CommonTypes'
-import IStudent from '../types/CommonTypes'
+import { IStudent, ITeacher } from '../types/CommonTypes';
 import blockChecking from './blockChecking';
 
+interface CustomJwtPayload {
+  userId: string;
+  role: string;
+}
+
 class AuthMiddleware {
-  authenticateToken = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    const token = req.cookies['JwtStudent'];
-   
-    if (token) {
+  private ACCESS_TOKEN_SECRET = process.env.ACCESS_TOKEN_SECRET || 'your_access_token_secret';
+  private REFRESH_TOKEN_SECRET = process.env.REFRESH_TOKEN_SECRET || 'your_refresh_token_secret';
+
+  authenticateToken = (role: string) => {
+    return async (req: Request, res: Response, next: NextFunction): Promise<any> => {
+      const accessToken = req.cookies[`access-token-${role}`];
+      const refreshToken = req.cookies[`refresh-token-${role}`];
+    
+      
+
       try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as CustomJwtPayload;
-        const data = await Student.findById(decoded.userdata).select('-password');
-        if(data)
-          {
-            const student=await blockChecking.StudentIsBlocked(data._id as string)
-            if(!student.valid)
-            {
-               res.status(400).json({ message: 'User is already blocked',valid:false });
-               return
-            }
-          }
-        req.user = data as IStudent;
-        if(req.user)
-          {
-         
-            next();
-          }
-          else
-           {
-            res.status(401).json({ message: 'Not authorized, no token',token:false,valid:true});
-           }
-      } catch (error) {
-        res.status(401).json({ message: 'Not authorized, invalid token',token:false,valid:true  });
-      }
-    } else {
-      res.status(401).json({ message: 'Not authorized, no token',token:false ,valid:true });
-    }
-  };
+        // Verify access token
+        const decodedAccessToken = jwt.verify(accessToken, this.ACCESS_TOKEN_SECRET) as CustomJwtPayload;
 
-  TeacherAuthenticateToken = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-  
-    const token = req.cookies['JwtTeacher'];
-
-    if (token) {
-      try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as CustomJwtPayload;
-        const data = await Teacher.findById(decoded.userdata).select('-password');
-        if(data)
-        {
-          const student=await blockChecking.TeacherIsBlocked(data._id as string)
-
-          if(!student.valid)
-          {
-             res.status(400).json({ error: 'User is already blocked',valid:false });
-             return
-          }
+        // Ensure the role matches
+        if (decodedAccessToken.role !== role) {
+          return res.status(403).json({ message: 'Forbidden: Role mismatch' });
         }
-       
 
-        req.user = data as ITeacher;
- 
-        
-         if(req.user)
-         {
-          
-          next();
-         }
-         else
-         {
-          res.status(401).json({ message: 'Not authorized, no token',token:false,valid:true});
-         }
-        
-      } catch (error) {
-        res.status(401).json({ message: 'Not authorized, invalid token',token:false,valid:true });
-      }
-    } else {
-      res.status(401).json({ message: 'Not authorized, no token',token:false,valid:true });
-    }
-  };
-
-  AdminAuthenticateToken = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    const token = req.cookies['JwtAdmin'];
-    if (token) {
-      try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as CustomJwtPayload;
-        const data = await Admin.findById(decoded.userdata).select('-password');
-        req.user = data as IAdmin;
-        if(req.user)
-        {
-          next();
+        // Check role and authenticate accordingly
+        switch (decodedAccessToken.role) {
+          case 'student':
+            await this.authenticateStudent(req, res, next, decodedAccessToken.userId);
+            break;
+          case 'teacher':
+            await this.authenticateTeacher(req, res, next, decodedAccessToken.userId);
+            break;
+          case 'admin':
+            await this.authenticateAdmin(req, res, next, decodedAccessToken.userId);
+            break;
+          default:
+            return res.status(401).json({ message: 'Invalid role', token: false });
         }
-        else
-         {
-          res.status(401).json({ message: 'Not authorized, no token',token:true  });
-         }
+
       } catch (error) {
-        res.status(401).json({ message: 'Not authorized, invalid token',token:true  });
+
+        // Handle token expiration or invalid token
+        if (refreshToken) {
+          const decodedRefreshToken = jwt.verify(refreshToken, this.REFRESH_TOKEN_SECRET) as CustomJwtPayload;
+
+          try {
+            const newAccessToken = jwt.sign(
+              { userId: decodedRefreshToken.userId, role: decodedRefreshToken.role },
+              this.ACCESS_TOKEN_SECRET,
+              { expiresIn: '15m' }
+            );
+
+            // Set new access token in the cookie
+            res.cookie(`access-token-${role}`, newAccessToken, {
+              httpOnly: true,
+              secure: process.env.NODE_ENV === 'production',
+              maxAge: 15 * 60 * 1000, // 15 minutes
+            });
+
+            // Retry authentication with the new token
+            req.cookies[`access-token-${role}`] = newAccessToken;
+            await this.authenticateToken(role)(req, res, next);
+          } catch (refreshError) {
+            return res.status(401).json({ message: 'Invalid refresh token', token: false });
+          }
+
+        } else {
+          return res.status(401).json({ message: 'Not authorized, invalid or expired token', token: false });
+        }
       }
-    } else {
-      res.status(401).json({ message: 'Not authorized, no token',token:true  });
-    }
+    };
   };
+
+  private async authenticateStudent(req: Request, res: Response, next: NextFunction, userId: string): Promise<any> {
+    const student = await Student.findById(userId).select('-password');
+    if (!student) {
+      return res.status(404).json({ message: 'Student not found', valid: false });
+    }
+    const blockStatus = await blockChecking.StudentIsBlocked(userId);
+    if (!blockStatus.valid) {
+      return res.status(400).json({ message: 'User is blocked', valid: false });
+    }
+    req.user = student;
+    next();
+  }
+
+  private async authenticateTeacher(req: Request, res: Response, next: NextFunction, userId: string): Promise<any> {
+    const teacher = await Teacher.findById(userId).select('-password');
+    if (!teacher) {
+      return res.status(404).json({ message: 'Teacher not found', valid: false });
+    }
+    const blockStatus = await blockChecking.TeacherIsBlocked(userId);
+    if (!blockStatus.valid) {
+      return res.status(400).json({ message: 'User is blocked', valid: false });
+    }
+    req.user = teacher;
+    next();
+  }
+
+  private async authenticateAdmin(req: Request, res: Response, next: NextFunction, userId: string): Promise<any> {
+    const admin = await Admin.findById(userId).select('-password');
+    if (!admin) {
+      return res.status(404).json({ message: 'Admin not found', valid: false });
+    }
+    req.user = admin;
+    next();
+  }
 }
 
 export default new AuthMiddleware();

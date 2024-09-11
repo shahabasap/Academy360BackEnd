@@ -33,25 +33,50 @@ async findProfileDetails(id:string) {
   async classroomAlreadyExist(classroomid: string, studentid: string): Promise<any> {
     const classroomObjectId = new mongoose.Types.ObjectId(classroomid);
 
-    const classroom = await Student.findOne({ _id: studentid, classrooms: { $in: [classroomObjectId] } });
-    return classroom;
+    const student = await Student.findOne({ _id: studentid, 'classrooms.classroomId': classroomObjectId,'classrooms.IsLocked':true });
+    return student;
+}
+  async addClaroomToBucket(classroomid: string, studentid: string): Promise<any> {
+
+     const classroom={classroomId:classroomid,IsLocked:true}
+     const student=await Student.updateOne({_id:studentid},{$push:{classrooms:classroom}})
+    return student;
 }
 
   async UpdateStudentProfile(classroomid:string,studentid:string): Promise<any> {
-    const classroomObjectId = new mongoose.Types.ObjectId(classroomid);
    
 
-    const classroom = await Student.updateOne({ _id: studentid},{$addToSet:{classrooms:classroomObjectId}});
+    const classroom = await Student.updateOne({ _id: studentid ,'classrooms.classroomId':classroomid},  { $set: { 'classrooms.$.IsLocked': false } });
+   
     return classroom;
   }
-  async findStudentClassrooms(id: string): Promise<any> {
-    const student = await Student.findOne({ _id: id }).populate('classrooms').exec();
+  async findClassroomIsLocked(studentId:string,classroomId:string): Promise<any> {
+    const studentClassroom=await  Student.findOne({_id:studentId,'classrooms.classroomId':classroomId}).exec()
+    console.log(studentClassroom)
+    return studentClassroom
+  }
+  async findStudentClassrooms(studentId: string): Promise<any> {
+   
+    const student = await Student.findOne({ _id: studentId,'classrooms.IsLocked':false
+
+     }).populate('classrooms.classroomId').exec();
     
     if (!student) {
         throw new Error('Student not found');
     }
+    if (!student.classrooms) {
+        throw new Error('No classroome Exists');
+    }
 
-    return student.classrooms;  // This will return the populated classrooms array
+    // Filter classrooms that are unlocked
+    const classroomsUnlocked = student?.classrooms.filter((classroom) => {
+     if(classroom.IsLocked==false)
+     {
+      return classroom.classroomId
+     }
+  });
+
+  return classroomsUnlocked;  // Return only the unlocked classrooms
 }
 async findStudentById(studentid: mongoose.Types.ObjectId): Promise<IStudent | null> {
   const student = await Student.findById({_id:studentid,is_verified:true});

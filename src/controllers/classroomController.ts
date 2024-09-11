@@ -15,6 +15,22 @@ class ClassroomController {
       res.status(customError.status || 500).json({ error: customError.message });
     }
   }
+  async isLocked(req: Request, res: Response) {
+    try {
+      const classroomId = req.query.classroomId;
+  const studentId = req.query.studentId;
+
+  // Ensure you are checking for these query parameters
+  if (!classroomId || !studentId) {
+    return res.status(400).send('Missing classroomId or studentId');
+  }
+      const classroomData = await ClassroomService.isLocked(classroomId as string,studentId as string);
+      res.status(200).json(classroomData);
+    } catch (error) {
+      const customError = error as CustomError;
+      res.status(customError.status || 500).json({ error: customError.message });
+    }
+  }
 
   // Fetch classrooms for a specific teacher
   async fetchTeacherClassrooms(req: Request, res: Response) {
@@ -34,10 +50,26 @@ class ClassroomController {
   async fetchStudentsClassrooms(req: Request, res: Response) {
     try {
       const { id } = req.params;
+ 
       if (!id) {
         throw new CustomErrorClass('Student ID is required', 400);
       }
+    
       const classroomData = await ClassroomService.fetchStudentClassrooms(id);
+      res.status(200).json(classroomData);
+    } catch (error) {
+      const customError = error as CustomError;
+      res.status(customError.status || 500).json({ error: customError.message });
+    }
+  }
+  // Fetch classroom using id
+  async fetchClassroom(req: Request, res: Response) {
+    try {
+      const { id } = req.params;
+      if (!id) {
+        throw new CustomErrorClass('Student ID is required', 400);
+      }
+      const classroomData = await ClassroomService.fetchClassroom(id);
       res.status(200).json(classroomData);
     } catch (error) {
       const customError = error as CustomError;
@@ -88,6 +120,7 @@ class ClassroomController {
   async addClassroom(req: Request, res: Response) {
     try {
       const { classroomid,studentid } = req.body;
+    
       if (!classroomid) {
         throw new CustomErrorClass('Classroom ID is required', 400);
       }

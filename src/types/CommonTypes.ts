@@ -13,9 +13,14 @@ export default interface IAdmin extends Document{
 
     username:string,
     password :string,
+    role:string
     
     
     }
+   type StudentClassrooms={
+      classroomId:string,
+      IsLocked:boolean
+   } 
 // Student Types--------
     export interface IStudent extends Document{
       _id ?:string,
@@ -28,7 +33,7 @@ export default interface IAdmin extends Document{
         Is_block:boolean,
         photo ?:string,
         is_verified:boolean,
-        classrooms ?:mongoose.Schema.Types.ObjectId[],
+        classrooms ?:StudentClassrooms[],
         isGoogleSign?:boolean,
         resetPasswordToken?:string | null,
         resetPasswordExpires?:number |null,

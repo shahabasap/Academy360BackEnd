@@ -12,11 +12,16 @@ const StudentSchema:Schema=new Schema({
     Is_block:{type:Boolean,default:false},
     photo:{type:String,require:false},
     is_verified:{type:Boolean,default:false},
-    classrooms:[{type:mongoose.Schema.Types.ObjectId,ref:'Classroom'}],
+    classrooms:[
+        {
+       classroomId: {type:mongoose.Schema.Types.ObjectId,ref:'Classroom'},
+        IsLocked:{type:Boolean,default:true}
+    }
+    ],
     isGoogleSign: {type:String,default:false,require:false},
     resetPasswordToken: { type: String, required: false },
     resetPasswordExpires: { type: Date, required: false },
-    role:{type:String,default:"Student"}
+    role:{type:String,default:"student"}
     
 })
 
