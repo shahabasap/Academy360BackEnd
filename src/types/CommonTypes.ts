@@ -67,6 +67,7 @@ export interface ITeacher extends Document {
     isGoogleSign?: boolean;  
     role: string;
     Approval: ApprovelType;
+    Is_submit:boolean
     
 }
 type ApprovelType={
@@ -75,15 +76,15 @@ type ApprovelType={
 }
 
 type Experience = {
-  institute?: string;
-  yearFrom?: Date;
-  yearTo?: Date;
+  institute?: string ;
+  yearFrom?: Date 
+  yearTo?: Date ;
 }
 
 type Graduation = {
   college?: string;
-  course?: string;
-  yearFrom?: Date;
+  course?: string ;
+  yearFrom?: Date ;
   yearTo?: Date;
 
 }

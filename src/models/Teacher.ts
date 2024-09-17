@@ -22,20 +22,21 @@ const TeacherSchema: Schema = new Schema({
         }
     ],
     graduation: {
-        college: { type: String, required: false },
-        course: { type: String, required: false },
-        yearFrom: { type: Date, required: false },
-        yearTo: { type: Date, required: false },
+        college: { type: String, required: false, default:'' }, // Set required to true
+        course: { type: String, required: false,default:'' }, // Set required to true
+        yearFrom: { type: Date, required: false }, // Set required to true
+        yearTo: { type: Date, required: false },   // Set required to true
     },
     postGraduation: {
-        college: { type: String, required: false },
-        course: { type: String, required: false },
-        yearFrom: { type: Date, required: false },
-        yearTo: { type: Date, required: false },
+        college: { type: String, required: false,default:'' }, // Set required to true
+        course: { type: String, required: false,default:''},  // Set required to true
+        yearFrom: { type: Date, required: false},  // Set required to true
+        yearTo: { type: Date, required: false },    // Set required to true
     },
     ugCertificate: { type: String, required: false },
     pgCertificate: { type: String, required: false },
     Is_verified: { type: Boolean, default: false },
+    Is_submit: { type: Boolean, default: false ,required:true },
     resetPasswordToken: { type: String, required: false },
     resetPasswordExpires: { type: Date, required: false },
     isGoogleSign: { type: Boolean, default: false },  

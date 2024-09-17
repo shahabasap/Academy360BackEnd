@@ -15,6 +15,7 @@ class authController{
     try {
   
       const AdminData = await AuthService.AdminSignIn(req.body);
+      console.log("here the data",req.body)
       if (AdminData && typeof AdminData !== 'string') {
   
         const{accessToken, refreshToken }=await AuthUtilities.CreateJwtToken(AdminData._id as string,AdminData.role as string)
@@ -33,7 +34,7 @@ class authController{
         })
   
       }
-      res.status(201).json(AdminData);
+      res.status(200).json(AdminData);
     } catch (error) {
       const customError=error as CustomError
       res.status(customError.status || 500).json({ error: customError.message });

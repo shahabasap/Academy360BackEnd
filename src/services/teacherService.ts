@@ -93,8 +93,10 @@ class teacherService {
         data.pgCertificate=data.pgurl
         delete data['pgurl']
       }
+    
+        data.Is_submit=true
 
-
+       console.log("data set",data)
       const  updateProfile= await teacherRepository.updateProfile(id,data)
       
      
