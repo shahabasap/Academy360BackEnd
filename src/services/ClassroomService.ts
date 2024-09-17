@@ -195,8 +195,8 @@ async searchStudents(data:{username:string,classroomid:mongoose.Types.ObjectId},
 
     // Check if the classroom is in the student's classroom list
     const isExist = await studentRepository.classroomAlreadyExist(classroomid, studentid);
-    if (!isExist) {
-        throw new CustomErrorClass('This classroom is not in your list.', 409); // 409 Conflict is suitable here
+    if (isExist) {
+        throw new CustomErrorClass('This classroom is not yet unlocked.', 409); // 409 Conflict is suitable here
     }
 
 

@@ -32,7 +32,7 @@ class teacherRepository {
     return await Teacher.updateOne({ _id: id }, data);
   }
   async updateProfilePic(id: string, data: {photo:string}) {
-    return await Teacher.updateOne({ _id: id }, data);
+    return await Teacher.updateOne({ _id: id }, {$set:{data}});
   }
 
 }

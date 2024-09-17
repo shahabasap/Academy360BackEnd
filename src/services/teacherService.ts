@@ -55,7 +55,7 @@ class teacherService {
   }
   
   // update your all profile details ------------------------
-  async updateProfile(id: string, data: Partial<ITeacher>, profilePic?: string | null,ug_Certificate?:string,pg_Certificate?:string) {
+  async updateProfile(id: string, data:any, profilePic?: string | null,ug_Certificate?:string,pg_Certificate?:string) {
     try {
      
 
@@ -65,18 +65,35 @@ class teacherService {
           const UploadPic=await uploadImage(profilePic)
           data.photo=UploadPic.secure_url
       }
+      else if(data.photourl)
+      {
+        data.photo=data.photourl
+        delete data['photourl']
+      }
 
       if(ug_Certificate)
       {
           const UploadPic=await uploadQualification(ug_Certificate)
           data.ugCertificate=UploadPic.secure_url
       }
+      else if(data.ugurl)
+      {
+        data.ugCertificate=data?.ugurl
+        delete  data['ugurl']
+      }
+
 
       if(pg_Certificate)
       {
           const UploadPic=await uploadQualification(pg_Certificate)
           data.pgCertificate=UploadPic.secure_url
       }
+      else if(data.pgurl)
+      {
+        data.pgCertificate=data.pgurl
+        delete data['pgurl']
+      }
+
 
       const  updateProfile= await teacherRepository.updateProfile(id,data)
       

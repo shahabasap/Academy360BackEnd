@@ -5,7 +5,7 @@ import { IAttendance }   from '../types/CommonTypes'
 
 const AttendanceSchema: Schema = new Schema({
   classroomId: { type: mongoose.Schema.Types.ObjectId, ref: 'Classroom', required: true },
-  Date: { type: Date, required: true, default: new Date() },
+  Date: { type: Date, required: true, default:Date.now() },
   AttedenceDataSet: [{
     studentId: { type: mongoose.Schema.Types.ObjectId, ref: 'Student', required: true },
     status: { type: String, enum: ['Present', 'Absent'], required: true }

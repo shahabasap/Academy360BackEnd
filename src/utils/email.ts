@@ -50,24 +50,25 @@ export const studentInvitationMail = async (data: any): Promise<void> => {
             from: process.env.EMAIL_USER,
             to: email,
             subject: 'Invitation to Join Classroom',
-            text: `
-                Hello ${studentname},
-
-                You have been invited to join a new classroom.
-
-                Classroom Subject: ${subject}
-                Teacher: ${teacherName}
-
-                Your classroom Id is ${classroomId}.
-                http://localhost:5173/unlock-classroom/?classroomid=${classroomId}&studentid=${studentId}
-
-
-                Please use this classroom id to join the session,never missout it.
-
-                Best regards,
-                The Classroom Team
+            html: `
+                <p>Hello ${studentname},</p>
+        
+                <p>You have been invited to join a new classroom.</p>
+        
+                <p><strong>Classroom Subject:</strong> ${subject}</p>
+                <p><strong>Teacher:</strong> ${teacherName}</p>
+        
+                <p>Your classroom Id is ${classroomId}.</p>
+                <p><a href="http://localhost:5173/unlock-classroom/?classroomid=${classroomId}&studentid=${studentId}">Click here</a> to unlock the classroom.</p>
+        
+                <p><strong style="font-size: 1.2em;">Important:</strong> Please login to your account before using the link.</p>
+                <p>Please use this classroom id to join the classroom, and never miss it.</p>
+        
+                <p>Best regards,</p>
+                <p>The Classroom Team</p>
             `
         };
+        
 
         // Send the email
         await transporter.sendMail(mailOptions);

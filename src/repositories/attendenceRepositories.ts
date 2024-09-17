@@ -13,7 +13,7 @@ class AttendenceRepository{
     const attendance = await Attendance.findOne({
       classroomId: classroomId,
       Date: { $gte: startOfDay, $lt: endOfDay } // Querying within the entire day
-    }).exec();
+    }).populate('AttedenceDataSet.studentId')
   
     return attendance;
   }
@@ -35,9 +35,11 @@ class AttendenceRepository{
       }
       
     async createAttendenceList(classroomId:mongoose.Types.ObjectId,Students:string[]) {
-          
+
+          const currentDate=new Date()
+          console.log('here attedence rep',currentDate)
           const StudentsList=Students.map((value)=>{return{studentId:value,status:"Absent"}})
-          const CreateList=await Attendance.create({classroomId,AttedenceDataSet:StudentsList})
+          const CreateList=await Attendance.create({classroomId,AttedenceDataSet:StudentsList,Date:currentDate})
           return CreateList
       }
 
@@ -60,10 +62,15 @@ class AttendenceRepository{
       );
       return attendanceRecord
 }
-      async findByClassroomIdAndDate(classroomId:mongoose.Types.ObjectId,date:Date) {
+      async findByClassroomIdAndDate(classroomId:string,date:Date) {
+        const startOfDay = new Date(date.getFullYear(), date.getMonth(), date.getDate(), 0, 0, 0);
+        const endOfDay = new Date(date.getFullYear(), date.getMonth(), date.getDate() + 1, 0, 0, 0);
+       
+       const attendance=await Attendance.findOne({
+        classroomId:classroomId,
+        Date: { $gte: startOfDay, $lt: endOfDay } // Querying within the entire day
+      }).populate('AttedenceDataSet.studentId')
 
-      
-       const attendance=await Attendance.findOne({classroomId:classroomId,Date:date})
        return attendance
 }
 

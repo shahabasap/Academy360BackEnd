@@ -17,7 +17,7 @@ class AttendenceController{
       }
     async MarkAttendence(req: Request, res: Response) {
         try {
-     
+         
           const classroomData = await attedenceServices.MarkAttendence(req.body);
           res.status(200).json(classroomData);
         } catch (error) {
@@ -27,9 +27,8 @@ class AttendenceController{
       }
     async AttendenceHistory(req: Request, res: Response) {
         try {
-          const {claroomId,date}=req.query
-           
-          const classroomData = await attedenceServices.AttendanceHistory(claroomId as string,date as string);
+          const {classroomId,date}=req.query
+          const classroomData = await attedenceServices.AttendanceHistory(classroomId as string,date as string);
           res.status(200).json(classroomData);
         } catch (error) {
           const customError = error as CustomError;

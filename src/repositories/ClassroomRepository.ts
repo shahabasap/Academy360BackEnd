@@ -122,7 +122,6 @@ class ClassroomRepository {
 
       // Find the classroom by classroomid
       const classroom = await Classroom.findOne({ _id:classroomid }).exec();
-      
       // Map to get only the student IDs
       const studentIds =classroom && classroom.students ? (classroom.students.map(student => student.studentid.toString())) :null
   

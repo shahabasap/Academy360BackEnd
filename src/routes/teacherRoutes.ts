@@ -32,9 +32,9 @@ router.post('/joinclassroom',autMiddleware.authenticateToken(role),  classroomCo
 router.post('/students',autMiddleware.authenticateToken(role),  classroomController.searchStudents);
 
 
-router.post('/attendence',autMiddleware.authenticateToken(role),  attendenceController.DayAttendence);
-router.patch('/attendence',autMiddleware.authenticateToken(role),  attendenceController.MarkAttendence);
-router.get('/attendence',autMiddleware.authenticateToken(role),  attendenceController.AttendenceHistory);
+router.post('/attendance',autMiddleware.authenticateToken(role),  attendenceController.DayAttendence);
+router.patch('/attendance',autMiddleware.authenticateToken(role),  attendenceController.MarkAttendence);
+router.get('/attendance',autMiddleware.authenticateToken(role),  attendenceController.AttendenceHistory);
 
 
 
