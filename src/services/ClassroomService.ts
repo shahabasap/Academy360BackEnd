@@ -199,6 +199,7 @@ async searchStudents(data:{username:string,classroomid:mongoose.Types.ObjectId},
         throw new CustomErrorClass('This classroom is not yet unlocked.', 409); // 409 Conflict is suitable here
     }
 
+   
 
     return student;
 }

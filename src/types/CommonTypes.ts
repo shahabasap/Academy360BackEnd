@@ -89,6 +89,10 @@ type Graduation = {
 
 }
 
+export interface CustomJwtPayload {
+  userId: string;
+  role: string;
+}
 
 // classroom-------------------------------
 export interface PaginatedResult<T> {

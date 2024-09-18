@@ -26,7 +26,7 @@ class ClassroomRepository {
     return classrooms;
   }
   async findByid(id: mongoose.Types.ObjectId): Promise<IClassroom|null> {
-    const classrooms = await Classroom.findOne({_id:id }).populate('teacherid').exec();
+    const classrooms = await Classroom.findOne({_id:id }).populate('teacherid').populate('students.studentid').exec();
     return classrooms;
   }
   

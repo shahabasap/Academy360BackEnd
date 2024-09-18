@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import teacherController from '../controllers/teacherController';
 import autMiddleware from '../middlewares/autMiddleware'
+import classroomAuth from '../middlewares/classroomAuth'
 import multer from 'multer'
 import classroomController from '../controllers/classroomController';
 import attendenceController from '../controllers/attendenceController';
@@ -26,15 +27,17 @@ router.get('/profile/:id',autMiddleware.authenticateToken(role),  teacherControl
 
 // classrooms routes--------
 router.post('/classroom',autMiddleware.authenticateToken(role),  classroomController.createClassroom);
-router.get('/addStudent',autMiddleware.authenticateToken(role),  classroomController.addStudent);
+router.get('/addStudent',autMiddleware.authenticateToken(role),classroomAuth.authenticateToken(role+'-class'),  classroomController.addStudent);
 router.get('/classrooms/:id',autMiddleware.authenticateToken(role),  classroomController.fetchTeacherClassrooms);
 router.post('/joinclassroom',autMiddleware.authenticateToken(role),  classroomController.teacherJoinToClassroom);
-router.post('/students',autMiddleware.authenticateToken(role),  classroomController.searchStudents);
+router.post('/students',autMiddleware.authenticateToken(role),classroomAuth.authenticateToken(role+'-class'),  classroomController.searchStudents);
+router.get('/classroom-logout',autMiddleware.authenticateToken(role),classroomAuth.authenticateToken(role+'-class'),  classroomController.ClasroomLogout);
+router.get('/classroom-data/:id',autMiddleware.authenticateToken(role),classroomAuth.authenticateToken(role+'-class'),  classroomController.classroomData);
 
+router.post('/attendance',autMiddleware.authenticateToken(role),classroomAuth.authenticateToken(role+'-class'),  attendenceController.DayAttendence);
+router.patch('/attendance',autMiddleware.authenticateToken(role),classroomAuth.authenticateToken(role+'-class'),  attendenceController.MarkAttendence);
+router.get('/attendance',autMiddleware.authenticateToken(role),classroomAuth.authenticateToken(role+'-class'),  attendenceController.AttendenceHistory);
 
-router.post('/attendance',autMiddleware.authenticateToken(role),  attendenceController.DayAttendence);
-router.patch('/attendance',autMiddleware.authenticateToken(role),  attendenceController.MarkAttendence);
-router.get('/attendance',autMiddleware.authenticateToken(role),  attendenceController.AttendenceHistory);
 
 
 

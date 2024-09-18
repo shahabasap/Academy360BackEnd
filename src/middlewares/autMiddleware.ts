@@ -43,7 +43,7 @@ class AuthMiddleware {
             await this.authenticateAdmin(req, res, next, decodedAccessToken.userId);
             break;
           default:
-            return res.status(401).json({ message: 'Invalid role', token: false });
+            return res.status(401).json({ message: 'Invalid role', token: false ,role:role});
         }
 
       } catch (error) {
@@ -70,11 +70,11 @@ class AuthMiddleware {
             req.cookies[`access-token-${role}`] = newAccessToken;
             await this.authenticateToken(role)(req, res, next);
           } catch (refreshError) {
-            return res.status(401).json({ message: 'Invalid refresh token', token: false });
+            return res.status(401).json({ message: 'Invalid refresh token', token: false,role:role });
           }
 
         } else {
-          return res.status(401).json({ message: 'Not authorized, invalid or expired token', token: false });
+          return res.status(401).json({ message: 'Not authorized, invalid or expired token', token: false,role:role });
         }
       }
     };
@@ -83,11 +83,11 @@ class AuthMiddleware {
   private async authenticateStudent(req: Request, res: Response, next: NextFunction, userId: string): Promise<any> {
     const student = await Student.findById(userId).select('-password');
     if (!student) {
-      return res.status(404).json({ message: 'Student not found', valid: false });
+      return res.status(404).json({ message: 'Student not found', valid: false,role:"student" });
     }
     const blockStatus = await blockChecking.StudentIsBlocked(userId);
     if (!blockStatus.valid) {
-      return res.status(400).json({ message: 'User is blocked', valid: false });
+      return res.status(400).json({ message: 'User is blocked', valid: false ,role:"student"});
     }
     req.user = student;
     next();
@@ -96,11 +96,11 @@ class AuthMiddleware {
   private async authenticateTeacher(req: Request, res: Response, next: NextFunction, userId: string): Promise<any> {
     const teacher = await Teacher.findById(userId).select('-password');
     if (!teacher) {
-      return res.status(404).json({ message: 'Teacher not found', valid: false });
+      return res.status(404).json({ message: 'Teacher not found', valid: false ,role:"teacher"});
     }
     const blockStatus = await blockChecking.TeacherIsBlocked(userId);
     if (!blockStatus.valid) {
-      return res.status(400).json({ message: 'User is blocked', valid: false });
+      return res.status(400).json({ message: 'User is blocked', valid: false ,role:"teacher"});
     }
     req.user = teacher;
     next();
@@ -109,7 +109,7 @@ class AuthMiddleware {
   private async authenticateAdmin(req: Request, res: Response, next: NextFunction, userId: string): Promise<any> {
     const admin = await Admin.findById(userId).select('-password');
     if (!admin) {
-      return res.status(404).json({ message: 'Admin not found', valid: false });
+      return res.status(404).json({ message: 'Admin not found', valid: false,role:"admin" });
     }
     req.user = admin;
     next();

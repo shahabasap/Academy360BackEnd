@@ -2,12 +2,12 @@ import mongoose from "mongoose";
 import attedenceServices from "../services/attedenceServices";
 import { CustomError } from "../types/CustomError";
 import { Request, Response } from "express";
+import ClassroomService from "../services/ClassroomService";
 
 
 class AttendenceController{
     async DayAttendence(req: Request, res: Response) {
         try {
-     
           const classroomData = await attedenceServices.DayAttendence(req.body);
           res.status(200).json(classroomData);
         } catch (error) {
@@ -35,6 +35,7 @@ class AttendenceController{
           res.status(customError.status || 500).json({ error: customError.message });
         }
       }
+    
 }
 
 export default  new AttendenceController()

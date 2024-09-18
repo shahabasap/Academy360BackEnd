@@ -52,7 +52,7 @@ async findProfileDetails(id:string) {
   }
   async findClassroomIsLocked(studentId:string,classroomId:string): Promise<any> {
     const studentClassroom=await  Student.findOne({_id:studentId,'classrooms.classroomId':classroomId}).exec()
-    console.log(studentClassroom)
+
     return studentClassroom
   }
   async findStudentClassrooms(studentId: string): Promise<any> {
@@ -75,6 +75,7 @@ async findProfileDetails(id:string) {
       return classroom.classroomId
      }
   });
+ 
 
   return classroomsUnlocked;  // Return only the unlocked classrooms
 }

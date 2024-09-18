@@ -3,6 +3,7 @@ import authMiddleware from '../middlewares/autMiddleware';
 import studentController from '../controllers/studentController';
 import multer from 'multer';
 import classroomController from '../controllers/classroomController';
+import classroomAuth from '../middlewares/classroomAuth';
 
 const router = Router();
 const upload = multer({ dest: 'uploads/' });
@@ -25,5 +26,7 @@ router.get('/classrooms/:id', authMiddleware.authenticateToken(studentRole), cla
 router.post('/joinClassroom', authMiddleware.authenticateToken(studentRole), classroomController.studentJoinToClassroom);
 router.get('/classroom/:id', authMiddleware.authenticateToken(studentRole), classroomController.fetchClassroom);
 router.get('/classroom-lock', authMiddleware.authenticateToken(studentRole), classroomController.isLocked);
+router.get('/classroom-logout', authMiddleware.authenticateToken(studentRole), classroomController.classroomLogout);
+router.get('/classroom-data/:id', authMiddleware.authenticateToken(studentRole),classroomAuth.authenticateToken(studentRole+'-class') ,classroomController.classroomData);
 
 export default router;

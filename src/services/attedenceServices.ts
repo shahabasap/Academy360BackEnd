@@ -8,18 +8,20 @@ import studentRepository from "../repositories/studentRepository";
 class AttendenceServices {
   async DayAttendence(data: { classroomid: mongoose.Types.ObjectId }) {
     const { classroomid } = data;
-
     const StudentsInClassroom =
       await ClassroomRepository.getStudentIdsByClassroomId(classroomid);
     if (!StudentsInClassroom) {
       throw new CustomErrorClass("No Students in your classroom", 404);
     }
 
+  
     const attedenceList = await attendenceRepositories.getAttendenceByClassId(
       classroomid
     );
+  
 
     if (!attedenceList) {
+
      
       const createAttendenceList =
         await attendenceRepositories.createAttendenceList(
@@ -43,6 +45,7 @@ class AttendenceServices {
     const attendance = await attendenceRepositories.getAttendenceByClassId(
       classroomid
     );
+  
     return attendance;
   }
 
@@ -54,7 +57,7 @@ class AttendenceServices {
     studentid: mongoose.Types.ObjectId;
   }) {
     const { classroomid, attendenceListId, studentid } = data;
-    console.log("data", data);
+   
     const student = await studentRepository.findStudentById(
       studentid as mongoose.Types.ObjectId
     );
