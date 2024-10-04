@@ -1,58 +1,57 @@
-import Student from '../models/Student';
-import OtpRepository from '../repositories/OtpRepositoy';
+import IOtpRepository from '../interfaces/repository/IotpRepo';
 import { generateOtp, sendEmail } from '../utils/email';
 import { CustomErrorClass } from "../types/CustomError";
+import OtpRepositoy from '../repositories/OtpRepositoy';
 
 class OtpService {
-  async sendOtp(email: string) {
-
-    const otp = generateOtp();
-    const expiresAt = new Date(Date.now() + 5 * 60000); // 5 minutes
-    await OtpRepository.createOtp(email, otp, expiresAt);
-    await sendEmail(email, otp);
-
-    return otp;
-  }
-
-  async verifyOtp(email: string, otp: string) {
-    const record = await OtpRepository.findOtp(email, otp);
-
-    if (!record || record.expiresAt < new Date()) {
-      throw new CustomErrorClass('OTP is invalid or expired',403);
+  private otpRepository: IOtpRepository
+    constructor() {
+      this.otpRepository=OtpRepositoy
     }
-    if (record) {
-        const Verify_Student=await OtpRepository.verifyUser(email);
-        return Verify_Student;
-      }
 
-    await OtpRepository.deleteOtp(email);
+    async sendOtp(email: string) {
+        const otp = generateOtp();
+        const expiresAt = new Date(Date.now() + 5 * 60000); // 5 minutes
+        await this.otpRepository.createOtp(email, otp, expiresAt);
+        await sendEmail(email, otp);
 
- 
-  }
-  async TeacherSendOtp(email: string) {
-
-    const otp = generateOtp();
-    const expiresAt = new Date(Date.now() + 5 * 60000); // 5 minutes
-    await OtpRepository.createOtp(email, otp, expiresAt);
-    await sendEmail(email, otp);
-
-    return otp;
-  }
-
-  async TeacherVerifyOtp(email: string, otp: string) {
-    const record = await OtpRepository.findOtp(email, otp);
-
-    if (!record || record.expiresAt < new Date()) {
-      throw new CustomErrorClass('OTP is invalid or expired',403);
+        return otp;
     }
-    if (record) {
-        const Verify_Teacher=await OtpRepository.verifyTeacher(email);
-        return Verify_Teacher;
-      }
 
-    await OtpRepository.deleteOtp(email);
- 
-  }
+    async verifyOtp(email: string, otp: string) {
+        const record = await this.otpRepository.findOtp(email, otp);
+
+        if (!record || record.expiresAt < new Date()) {
+            throw new CustomErrorClass('OTP is invalid or expired', 403);
+        }
+        if (record) {
+            const verifyStudent = await this.otpRepository.verifyUser(email);
+            await this.otpRepository.deleteOtp(email); // Move delete here to ensure it's deleted after successful verification
+            return verifyStudent;
+        }
+    }
+
+    async teacherSendOtp(email: string) {
+        const otp = generateOtp();
+        const expiresAt = new Date(Date.now() + 5 * 60000); // 5 minutes
+        await this.otpRepository.createOtp(email, otp, expiresAt);
+        await sendEmail(email, otp);
+
+        return otp;
+    }
+
+    async teacherVerifyOtp(email: string, otp: string) {
+        const record = await this.otpRepository.findOtp(email, otp);
+
+        if (!record || record.expiresAt < new Date()) {
+            throw new CustomErrorClass('OTP is invalid or expired', 403);
+        }
+        if (record) {
+            const verifyTeacher = await this.otpRepository.verifyTeacher(email);
+            await this.otpRepository.deleteOtp(email); // Move delete here to ensure it's deleted after successful verification
+            return verifyTeacher;
+        }
+    }
 }
 
 export default new OtpService();

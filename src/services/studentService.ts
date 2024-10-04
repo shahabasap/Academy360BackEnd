@@ -1,48 +1,48 @@
-import studentRepository from "../repositories/studentRepository";
-// import { CustomErrorClass } from "../types/CustomError";
-import {IStudent} from '../types/CommonTypes'
+import IStudentRepository from '../interfaces/repository/IstudentRepo'; // Import the interface
+import { IStudent } from '../types/CommonTypes';
 import fileRepository from "../repositories/fileRepository";
 import { uploadImage } from "../utils/cloudinary";
+import studentRepository from '../repositories/studentRepository';
 
 
 
-class studentService {
- 
-  async home(data:IStudent) {
-    const home = await studentRepository.home(data);
-    return home
+class StudentService {
 
-  }
-  // profile services--------
-  // update profile details----------
-  async updateProfile(id: string, data: Partial<IStudent>, profilePic?: string) {
-    
-     
-        if(profilePic)
-        {
-          const uploadProfile=await uploadImage(profilePic)
-          data.photo=uploadProfile.secure_url
-        }
-    return studentRepository.updateProfile(id, data);
-  }
-  // update profile pic--------------
-  async updateProfilePic(id: string, profilePic?: string) {
-    
-    if (profilePic) {
-      const imageUrl = await fileRepository.uploadProfilePicture(profilePic);
-      const data={photo:imageUrl}
-     
-      return studentRepository.updateProfilePic(id, data);
+    private studentRepository: IStudentRepository;
+    constructor() {
+      // Initialize private repository members
+      this.studentRepository =studentRepository;
     }
 
-  
-  }
-// fetch profile data------------
-  async profile(id:string) {
-    const profile:any=studentRepository.findProfileDetails(id)
-    
-      return profile
- }
+    async home(data: IStudent) {
+        const home = await this.studentRepository.home(data);
+        return home;
+    }
+
+    // Profile services
+    // Update profile details
+    async updateProfile(id: string, data: Partial<IStudent>, profilePic?: string) {
+        if (profilePic) {
+            const uploadProfile = await uploadImage(profilePic);
+            data.photo = uploadProfile.secure_url;
+        }
+        return this.studentRepository.updateProfile(id, data);
+    }
+
+    // Update profile picture
+    async updateProfilePic(id: string, profilePic?: string) {
+        if (profilePic) {
+            const imageUrl = await fileRepository.uploadProfilePicture(profilePic);
+            const data = { photo: imageUrl };
+            return this.studentRepository.updateProfilePic(id, data);
+        }
+    }
+
+    // Fetch profile data
+    async profile(id: string) {
+        const profile = await this.studentRepository.findProfileDetails(id);
+        return profile;
+    }
 }
 
-export default new studentService();
+export default new StudentService(); // Instantiate the service with the repository

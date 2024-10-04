@@ -2,10 +2,11 @@ import Teacher from '../models/Teacher';
 import Student from '../models/Student';
 import { CustomError,CustomErrorClass } from '../types/CustomError';
 import {PaginatedResult} from '../types/CommonTypes';
+import IAdminRepository from '../interfaces/repository/IadminRepo';
 
 
 
-class adminRepository {
+class adminRepository implements IAdminRepository {
   async dashboard() {
     const currentDate = new Date();
     const fourMonthsAgo = new Date(currentDate.setMonth(currentDate.getMonth() - 4));

@@ -1,136 +1,98 @@
 import mongoose from "mongoose";
-import attendenceRepositories from "../repositories/attendenceRepositories";
-import attendence from "../repositories/attendenceRepositories";
-import ClassroomRepository from "../repositories/ClassroomRepository";
+import IAttendenceRepository from "../interfaces/repository/IattedenceRepo";
+import IClassroomRepository from "../interfaces/repository/IclassroomRepo";
+import IStudentRepository from "../interfaces/repository/IstudentRepo";
 import { CustomErrorClass } from "../types/CustomError";
-import studentRepository from "../repositories/studentRepository";
+import AttendenceRepositories from '../repositories/attendenceRepositories'
+import ClassroomRepository from '../repositories/ClassroomRepository';
+import StudentRepository from '../repositories/studentRepository';
 
 class AttendenceServices {
+  // Private repository properties
+  private attendenceRepositories: IAttendenceRepository;
+  private classroomRepository: IClassroomRepository;
+  private studentRepository: IStudentRepository;
+
+  constructor(
+    
+  ) {
+    this.attendenceRepositories = AttendenceRepositories;
+    this.classroomRepository = ClassroomRepository;
+    this.studentRepository = StudentRepository;
+  }
+
   async DayAttendence(data: { classroomid: mongoose.Types.ObjectId }) {
     const { classroomid } = data;
-    const StudentsInClassroom =
-      await ClassroomRepository.getStudentIdsByClassroomId(classroomid);
-    if (!StudentsInClassroom) {
+
+    const studentsInClassroom = await this.classroomRepository.getStudentIdsByClassroomId(classroomid);
+    if (!studentsInClassroom || studentsInClassroom.length === 0) {
       throw new CustomErrorClass("No Students in your classroom", 404);
     }
 
+    const attendanceList = await this.attendenceRepositories.getAttendenceByClassId(classroomid);
   
-    const attedenceList = await attendenceRepositories.getAttendenceByClassId(
-      classroomid
-    );
-  
-
-    if (!attedenceList) {
-
-     
-      const createAttendenceList =
-        await attendenceRepositories.createAttendenceList(
-          classroomid,
-          StudentsInClassroom
-        );
-      if (createAttendenceList) {
-        return createAttendenceList;
-      }
-    } else {
-      if (
-        attedenceList.AttedenceDataSet.length !== StudentsInClassroom.length
-      ) {
-        const updateAttendenceList =
-          await attendenceRepositories.updateNewJoinees(
-            classroomid,
-            StudentsInClassroom
-          );
-      }
+    if (!attendanceList) {
+      return await this.attendenceRepositories.createAttendenceList(classroomid, studentsInClassroom);
+    } else if (attendanceList.AttedenceDataSet.length !== studentsInClassroom.length) {
+      await this.attendenceRepositories.updateNewJoinees(classroomid, studentsInClassroom);
     }
-    const attendance = await attendenceRepositories.getAttendenceByClassId(
-      classroomid
-    );
-  
-    return attendance;
+
+    return await this.attendenceRepositories.getAttendenceByClassId(classroomid);
   }
 
-  // Marking Attendence----------------------
-
+  // Marking Attendance
   async MarkAttendence(data: {
     classroomid: mongoose.Types.ObjectId;
     attendenceListId: mongoose.Types.ObjectId;
     studentid: mongoose.Types.ObjectId;
   }) {
     const { classroomid, attendenceListId, studentid } = data;
-   
-    const student = await studentRepository.findStudentById(
-      studentid as mongoose.Types.ObjectId
-    );
 
+    const student = await this.studentRepository.findStudentById(studentid );
     if (!student) {
       throw new CustomErrorClass("User is not found", 404);
     }
 
-    const classroom = await ClassroomRepository.findByid(classroomid);
-
+    const classroom = await this.classroomRepository.findById(classroomid);
     if (!classroom) {
       throw new CustomErrorClass("Classroom is not found", 404);
     }
 
-    const attendanceRecord = await attendenceRepositories.findByIdStudentId(
-      attendenceListId,
-      studentid
-    );
+    const attendanceRecord = await this.attendenceRepositories.findByIdStudentId(attendenceListId, studentid);
     if (!attendanceRecord) {
       throw new Error("Attendance record not found");
     }
-    const currentStatus = attendanceRecord?.AttedenceDataSet[0].status;
 
-    // Determine the new status
+    const currentStatus = attendanceRecord?.AttedenceDataSet[0].status;
     const newStatus = currentStatus === "Present" ? "Absent" : "Present";
 
-    const updatedResult = await attendenceRepositories.updateStudentAttendence(
-      attendenceListId,
-      studentid,
-      newStatus
-    );
-
-    return updatedResult;
+    return await this.attendenceRepositories.updateStudentAttendence(attendenceListId, studentid, newStatus);
   }
 
   async AttendanceHistory(classroomId: string, date: string) {
     try {
-
       const dateObject = new Date(date);
       if (isNaN(dateObject.getTime())) {
         throw new Error("Invalid Date format");
       }
+
       const currentDate = new Date();
       currentDate.setHours(0, 0, 0, 0); // Set current date to midnight
 
-      // Set the dateObject to midnight for accurate comparison
-      const comparisonDate = new Date(dateObject);
-      comparisonDate.setHours(0, 0, 0, 0); // Normalize the time to 00:00:00
       // Prevent accessing today's attendance
-      if (comparisonDate.getTime() === currentDate.getTime()) {
+      if (dateObject.setHours(0, 0, 0, 0) === currentDate.getTime()) {
         throw new Error("Today's attendance cannot be accessed.");
       }
 
-      // Convert classroomId to a MongoDB ObjectId
-      const classroomObjectId = new mongoose.Types.ObjectId(classroomId);
-
-      // Fetch attendance record by classroomId and date
-      const attendanceRecord =
-        await attendenceRepositories.findByClassroomIdAndDate(
-          classroomId,
-          comparisonDate
-        );
-
-      // Check if attendance record exists
+      const attendanceRecord = await this.attendenceRepositories.findByClassroomIdAndDate(classroomId, dateObject);
       if (!attendanceRecord) {
         throw new Error("Attendance record not found");
       }
 
       return attendanceRecord;
     } catch (error) {
-      // Assert that the error is of type `Error`
       if (error instanceof Error) {
-        throw new Error(`1Failed to fetch data: ${error.message}`);
+        throw new Error(`Failed to fetch data: ${error.message}`);
       } else {
         throw new Error("An unknown error occurred");
       }

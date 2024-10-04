@@ -8,9 +8,10 @@ import crypto from 'crypto';
 import AuthUtilities from '../utils/AuthUtilities';
 import { trusted } from 'mongoose';
 import Otp from '../models/Otp';
+import IAuthRepository from '../interfaces/repository/IauthRepo';
 
 
-class AuthRepository {
+class AuthRepository implements IAuthRepository {
     // admin login----------
     async Adminlogin(data: { username: string; password: string }) {
         try {

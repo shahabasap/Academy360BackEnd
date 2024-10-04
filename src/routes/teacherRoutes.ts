@@ -31,7 +31,7 @@ router.get('/addStudent',autMiddleware.authenticateToken(role),classroomAuth.aut
 router.get('/classrooms/:id',autMiddleware.authenticateToken(role),  classroomController.fetchTeacherClassrooms);
 router.post('/joinclassroom',autMiddleware.authenticateToken(role),  classroomController.teacherJoinToClassroom);
 router.post('/students',autMiddleware.authenticateToken(role),classroomAuth.authenticateToken(role+'-class'),  classroomController.searchStudents);
-router.get('/classroom-logout',autMiddleware.authenticateToken(role),classroomAuth.authenticateToken(role+'-class'),  classroomController.ClasroomLogout);
+router.get('/classroom-logout',autMiddleware.authenticateToken(role),classroomAuth.authenticateToken(role+'-class'),  classroomController.teacherClasroomLogout);
 router.get('/classroom-data/:id',autMiddleware.authenticateToken(role),classroomAuth.authenticateToken(role+'-class'),  classroomController.classroomData);
 
 router.post('/attendance',autMiddleware.authenticateToken(role),classroomAuth.authenticateToken(role+'-class'),  attendenceController.DayAttendence);

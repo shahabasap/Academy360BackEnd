@@ -29,4 +29,5 @@ router.get('/classroom-lock', authMiddleware.authenticateToken(studentRole), cla
 router.get('/classroom-logout', authMiddleware.authenticateToken(studentRole), classroomController.classroomLogout);
 router.get('/classroom-data/:id', authMiddleware.authenticateToken(studentRole),classroomAuth.authenticateToken(studentRole+'-class') ,classroomController.classroomData);
 
+
 export default router;

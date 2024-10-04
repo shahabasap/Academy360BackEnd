@@ -4,7 +4,7 @@ import { CustomErrorClass } from "../types/CustomError"
 import Classroom from "../models/Classroom";
 
 
-class AttendenceRepository{
+class AttendenceRepository  {
   async getAttendenceByClassId(classroomId: mongoose.Types.ObjectId) {
     const currentDate = new Date();
     const startOfDay = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate(), 0, 0, 0);

@@ -1,96 +1,72 @@
 import Student from "../models/Student";
-import { CustomError,CustomErrorClass } from '../types/CustomError';
-import {IStudent,IClassroom} from '../types/CommonTypes'
+import { CustomErrorClass } from '../types/CustomError';
+import { IStudent, IClassroom } from '../types/CommonTypes';
 import mongoose from "mongoose";
-const { ObjectId } = mongoose.Types;
+import IStudentRepository from "../interfaces/repository/IstudentRepo";
 
-
-
-
-class StudentRepository {
-  async home(data:IStudent) {
-  
+class StudentRepository implements IStudentRepository {
+  async home(data: IStudent) {
     return data;
   }
-//  Profile repo------------------------
-async findProfileDetails(id:string) {
 
-  const Profile=await Student.findOne({_id:id})
-  if(!Profile)
-    {
-     throw new CustomErrorClass("User not found",404)
+  // Profile repository
+  async findProfileDetails(id: string): Promise<IStudent | null> {
+    const profile = await Student.findOne({ _id: id });
+    if (!profile) {
+      throw new CustomErrorClass("User not found", 404);
     }
-  return Profile
-}
-
-  async updateProfile(id: string, data: Partial<IStudent>) {
-    return Student.updateOne({ _id: id }, data);
-  }
-  async updateProfilePic(id: string, data:{photo:string}) {
-    return Student.updateOne({ _id: id }, data);
+    return profile;
   }
 
-  async classroomAlreadyExist(classroomid: string, studentid: string): Promise<any> {
+  async updateProfile(id: string, data: Partial<IStudent>): Promise<void> {
+    await Student.updateOne({ _id: id }, data);
+  }
+
+  async updateProfilePic(id: string, data: { photo: string }): Promise<void> {
+    await Student.updateOne({ _id: id }, data);
+  }
+
+  async classroomAlreadyExists(classroomid: string, studentid: string): Promise<boolean> {
     const classroomObjectId = new mongoose.Types.ObjectId(classroomid);
-
-    const student = await Student.findOne({ _id: studentid, 'classrooms.classroomId': classroomObjectId,'classrooms.IsLocked':true });
-    return student;
-}
-  async addClaroomToBucket(classroomid: string, studentid: string): Promise<any> {
-
-     const classroom={classroomId:classroomid,IsLocked:true}
-     const student=await Student.updateOne({_id:studentid},{$push:{classrooms:classroom}})
-    return student;
-}
-
-  async UpdateStudentProfile(classroomid:string,studentid:string): Promise<any> {
-   
-
-    const classroom = await Student.updateOne({ _id: studentid ,'classrooms.classroomId':classroomid},  { $set: { 'classrooms.$.IsLocked': false } });
-   
-    return classroom;
+    const student = await Student.findOne({
+      _id: studentid,
+      'classrooms.classroomId': classroomObjectId,
+      'classrooms.IsLocked': true
+    });
+    return !!student; // Return true or false based on existence
   }
-  async findClassroomIsLocked(studentId:string,classroomId:string): Promise<any> {
-    const studentClassroom=await  Student.findOne({_id:studentId,'classrooms.classroomId':classroomId}).exec()
 
-    return studentClassroom
+  async addClassroomToBucket(classroomid: string, studentid: string): Promise<any> {
+    const classroom = { classroomId: classroomid, IsLocked: true };
+    return await Student.updateOne({ _id: studentid }, { $push: { classrooms: classroom } });
   }
+
+  async updateStudentProfile(classroomid: string, studentid: string): Promise<any> {
+    return await Student.updateOne({ _id: studentid, 'classrooms.classroomId': classroomid }, { $set: { 'classrooms.$.IsLocked': false } });
+  }
+
+  async findClassroomIsLocked(studentId: string, classroomId: string): Promise<any> {
+    return await Student.findOne({ _id: studentId, 'classrooms.classroomId': classroomId }).exec();
+  }
+
   async findStudentClassrooms(studentId: string): Promise<any> {
-   
-    const student = await Student.findOne({ _id: studentId,'classrooms.IsLocked':false
-
-     }).populate('classrooms.classroomId').exec();
+    const student = await Student.findOne({ _id: studentId, 'classrooms.IsLocked': false }).populate('classrooms.classroomId').exec();
     
     if (!student) {
-        throw new Error('Student not found');
-    }
-    if (!student.classrooms) {
-        throw new Error('No classroome Exists');
+      throw new CustomErrorClass('Student not found', 404);
     }
 
-    // Filter classrooms that are unlocked
-    const classroomsUnlocked = student?.classrooms.filter((classroom) => {
-     if(classroom.IsLocked==false)
-     {
-      return classroom.classroomId
-     }
-  });
- 
+    return student?.classrooms ? student.classrooms.filter(classroom => !classroom.IsLocked) : null; // Return only the unlocked classrooms
+  }
 
-  return classroomsUnlocked;  // Return only the unlocked classrooms
-}
-async findStudentById(studentid: mongoose.Types.ObjectId): Promise<IStudent | null> {
-  const student = await Student.findById({_id:studentid,is_verified:true});
-  return student;
-}
-
+  async findStudentById(studentid: mongoose.Types.ObjectId): Promise<IStudent | null> {
+    return await Student.findById({ _id: studentid, is_verified: true });
+  }
+  async isBlockeById(id:string):Promise<IStudent | null> 
+  {
+    return await Student.findOne({_id:id,Is_block:true})
+  }
   
 }
-
-
-
-
-
-
 
 export default new StudentRepository();

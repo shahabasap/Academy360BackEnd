@@ -1,10 +1,11 @@
+import IOtpRepository from '../interfaces/repository/IotpRepo';
 import Otp from '../models/Otp';
 import Student from '../models/Student';
 import  Teacher  from '../models/Teacher';
 import { CustomError,CustomErrorClass } from '../types/CustomError';
 
 
-class OtpRepository {
+class OtpRepository implements IOtpRepository {
   async createOtp(email: string, otp: number, expiresAt: Date) {
     try {
          return await Otp.create({ email, otp, expiresAt });

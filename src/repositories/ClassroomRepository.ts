@@ -3,8 +3,9 @@ import Classroom from '../models/Classroom';
 import Student from '../models/Student';
 import { CustomErrorClass,CustomError } from '../types/CustomError';
 import { IClassroom, StudentData,ClassCreating,PaginatedResult} from '../types/CommonTypes';
+import IClassroomRepository from '../interfaces/repository/IclassroomRepo';
 
-class ClassroomRepository {
+class ClassroomRepository implements IClassroomRepository{
   async createClassroom(data: ClassCreating): Promise<IClassroom> {
     const { subject, teacherid } = data;
     const trimmedSubject = subject.trim();
@@ -25,7 +26,7 @@ class ClassroomRepository {
     const classrooms = await Classroom.find({ teacherid: teacherid }).exec();
     return classrooms;
   }
-  async findByid(id: mongoose.Types.ObjectId): Promise<IClassroom|null> {
+  async findById(id: mongoose.Types.ObjectId): Promise<IClassroom|null> {
     const classrooms = await Classroom.findOne({_id:id }).populate('teacherid').populate('students.studentid').exec();
     return classrooms;
   }
@@ -79,7 +80,7 @@ class ClassroomRepository {
     const classroom = await Classroom.findOne({_id:classroomid,'students.studentid': studentid,'students.isVerified':true});
     return classroom;
   }
-  async findIsBockedForStudent(classroomid: string): Promise<IClassroom | null> {
+  async findIsBlockedForStudent(classroomid: string): Promise<IClassroom | null> {
     const classroom = await Classroom.findOne({_id:classroomid,Is_blocked:true});
     return classroom;
   }
@@ -112,7 +113,7 @@ class ClassroomRepository {
     const classroom = await Classroom.findOne({ _id: classroomid, teacherid });
     return classroom;
   }
-  async findIsBocked(classroomid:mongoose.Types.ObjectId): Promise<IClassroom | null> {
+  async findIsBlocked(classroomid:mongoose.Types.ObjectId): Promise<IClassroom | null> {
   
     const classroom = await Classroom.findOne({ _id: classroomid,Is_blocked:true });
     return classroom;

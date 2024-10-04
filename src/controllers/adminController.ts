@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import { Request, Response,NextFunction } from 'express';
 import { CustomError,CustomErrorClass } from '../types/CustomError';
 import adminServices from '../services/adminServices';
 import Admin from '../models/admin';
@@ -8,7 +8,7 @@ import AuthUtilities from "../utils/AuthUtilities";
 
 class adminController{
 
-  async createAdmin(req:Request,res:Response)
+  async createAdmin(req:Request,res:Response,next: NextFunction)
   {
     try {
       let username=process.env.AdminMail
@@ -25,46 +25,43 @@ class adminController{
       throw new CustomErrorClass("Admin is already exists",409)
         
     } catch (error) {
-        const customError=error as CustomError
-        res.status(customError.status || 500).json({ error: customError.message });
+       next(error)
+        
     }
    
 
   }
   // Classroom Controllers----------
-  async fetchClassrooms(req: Request, res: Response) {
+  async fetchClassrooms(req: Request, res: Response,next: NextFunction) {
     try {
       const page = parseInt(req.query.page as string) || 1;
       const pageSize = parseInt(req.query.pageSize as string) || 10;
       const students = await adminServices.fetchClassrooms(page, pageSize);
       return res.status(200).json(students);
     } catch (error) {
-      const customError=error as CustomError
-      res.status(customError.status || 500).json({ error: customError.message });
+      next(error)
     }
   }
-  async classroomBlock(req:Request,res:Response)
+  async classroomBlock(req:Request,res:Response,next: NextFunction)
   {
     try {
         const StudentsData= await adminServices.classroomBlock(req.params.id)
         res.status(200).json(StudentsData)
         
     } catch (error) {
-        const customError=error as CustomError
-        res.status(customError.status || 500).json({ error: customError.message });
+      next(error)
     }
    
 
   }
-  async classroomUnblock(req:Request,res:Response)
+  async classroomUnblock(req:Request,res:Response,next: NextFunction)
   {
     try {
         const StudentsData= await adminServices.classroomUnblock(req.params.id)
         res.status(200).json(StudentsData)
         
     } catch (error) {
-        const customError=error as CustomError
-        res.status(customError.status || 500).json({ error: customError.message });
+      next(error)
     }
    
 
@@ -72,49 +69,46 @@ class adminController{
    
 
   // Student controllers--------------------------
-  async getStudents(req: Request, res: Response) {
+  async getStudents(req: Request, res: Response,next: NextFunction) {
     try {
       const page = parseInt(req.query.page as string) || 1;
       const pageSize = parseInt(req.query.pageSize as string) || 10;
       const students = await adminServices.getVerifiedStudents(page, pageSize);
       return res.status(200).json(students);
     } catch (error) {
-      const customError=error as CustomError
-      res.status(customError.status || 500).json({ error: customError.message });
+      next(error)
     }
   }
    
 
   
-  async StudentBlock(req:Request,res:Response)
+  async StudentBlock(req:Request,res:Response,next: NextFunction)
   {
     try {
         const StudentsData= await adminServices.block(req.params.id)
         res.status(200).json(StudentsData)
         
     } catch (error) {
-        const customError=error as CustomError
-        res.status(customError.status || 500).json({ error: customError.message });
+      next(error)
     }
    
 
   }
-  async StudentUnblock(req:Request,res:Response)
+  async StudentUnblock(req:Request,res:Response,next: NextFunction)
   {
     try {
         const StudentsData= await adminServices.unblock(req.params.id)
         res.status(200).json(StudentsData)
         
     } catch (error) {
-        const customError=error as CustomError
-        res.status(customError.status || 500).json({ error: customError.message });
+      next(error)
     }
    
 
   }
   // Teacher Controllers-------------------------
 
-  async FetchTeachersDetails(req:Request,res:Response)
+  async FetchTeachersDetails(req:Request,res:Response,next: NextFunction)
   {
     try {
        const page= parseInt(req.query.page as string) || 1;
@@ -123,41 +117,38 @@ class adminController{
         res.status(200).json(TeacherData)
         
     } catch (error) {
-        const customError=error as CustomError
-        res.status(customError.status || 500).json({ error: customError.message });
+      next(error)
     }
    
 
   }
 
-async TeacherBlock(req:Request,res:Response)
+async TeacherBlock(req:Request,res:Response,next: NextFunction)
 {
   try {
-      const StudentsData= await adminServices.teacherblock(req.params.id)
+      const StudentsData= await adminServices.teacherBlock(req.params.id)
       res.status(200).json(StudentsData)
       
   } catch (error) {
-      const customError=error as CustomError
-      res.status(customError.status || 500).json({ error: customError.message });
+    next(error)
   }
  
 
 }
 
-async TeacherUnblock(req:Request,res:Response)
+async TeacherUnblock(req:Request,res:Response,next: NextFunction)
 {
   try {
-      const StudentsData= await adminServices.teacherunblock(req.params.id)
+      const StudentsData= await adminServices.teacherUnblock(req.params.id)
       res.status(200).json(StudentsData)
       
   } catch (error) {
-      const customError=error as CustomError
-      res.status(customError.status || 500).json({ error: customError.message });
+    next(error)
   }
  
 
 }
-async rejectTeacher(req:Request,res:Response)
+async rejectTeacher(req:Request,res:Response,next: NextFunction)
 {
   try {
        const {id}=req.params
@@ -166,13 +157,12 @@ async rejectTeacher(req:Request,res:Response)
       res.status(200).json(teacher)
       
   } catch (error) {
-      const customError=error as CustomError
-      res.status(customError.status || 500).json({ error: customError.message });
+    next(error)
   }
  
 
 }
-async approveTeacher(req:Request,res:Response)
+async approveTeacher(req:Request,res:Response,next: NextFunction)
 {
   try {
     const {id}=req.params
@@ -180,21 +170,19 @@ async approveTeacher(req:Request,res:Response)
       res.status(200).json(teacher)
       
   } catch (error) {
-      const customError=error as CustomError
-      res.status(customError.status || 500).json({ error: customError.message });
+    next(error)
   }
  
 
 }
-async dashboardData(req:Request,res:Response)
+async dashboardData(req:Request,res:Response,next: NextFunction)
 {
   try {
       const Dashboard= await adminServices.dashboardData()
       res.status(200).json(Dashboard)
       
   } catch (error) {
-      const customError=error as CustomError
-      res.status(customError.status || 500).json({ error: customError.message });
+    next(error)
   }
  
 
