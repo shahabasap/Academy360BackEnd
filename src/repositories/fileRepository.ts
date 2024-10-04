@@ -1,7 +1,9 @@
 import IFileRepository from '../interfaces/repository/IfileRepo';
 import { uploadImage,uploadQualification } from '../utils/cloudinary';
 
-class FileRepository implements IFileRepository {
+
+
+class FileRepository  implements IFileRepository {
   async uploadProfilePicture(filePath: string) {
     const result = await uploadImage(filePath);
     

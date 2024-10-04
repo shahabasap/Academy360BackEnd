@@ -1,11 +1,7 @@
 import mongoose, { Schema, Document } from 'mongoose';
+import { IChat }   from '../types/CommonTypes'
 
-export interface IChat extends Document {
-  message: string;
-  sender: mongoose.Types.ObjectId; // User reference (now an ObjectId)
-  group: mongoose.Types.ObjectId;  // Group reference (now an ObjectId)
-  createdAt: Date;
-}
+
 
 const ChatSchema: Schema = new Schema(
   {

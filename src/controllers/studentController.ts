@@ -46,7 +46,7 @@ class StudentController {
     }
   }
 
-  async updateProfilePic(req: Request, res: Response, next: NextFunction) {
+  async updateProfilepic(req: Request, res: Response, next: NextFunction) {
     const { id } = req.params;
     const { file } = req;
 

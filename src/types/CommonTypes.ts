@@ -143,3 +143,11 @@ export interface IAttendance extends Document {
     status: 'Present' | 'Absent';
   }[];
 }
+
+// chat types-----------
+export interface IChat extends Document {
+  message: string;
+  sender: mongoose.Types.ObjectId; // User reference (now an ObjectId)
+  group: mongoose.Types.ObjectId;  // Group reference (now an ObjectId)
+  createdAt: Date;
+}

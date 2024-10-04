@@ -4,7 +4,7 @@ import { IClassroom, StudentData, ClassCreating, PaginatedResult } from '../../t
 interface IClassroomRepository {
   createClassroom(data: ClassCreating): Promise<IClassroom>;
   findTeacherClassrooms(teacherid: string): Promise<IClassroom[]>;
-  findById(id: mongoose.Types.ObjectId): Promise<IClassroom | null>;
+  classroomFindById(id: mongoose.Types.ObjectId): Promise<IClassroom | null>;
   findByClassId(classroomId: string): Promise<IClassroom | null>;
   fetchClassrooms(page: number, pageSize: number): Promise<PaginatedResult<any>>;
   blockClassroom(classroomid: string): Promise<any>;

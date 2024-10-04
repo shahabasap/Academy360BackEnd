@@ -53,7 +53,7 @@ class AttendenceServices {
       throw new CustomErrorClass("User is not found", 404);
     }
 
-    const classroom = await this.classroomRepository.findById(classroomid);
+    const classroom = await this.classroomRepository.classroomFindById(classroomid);
     if (!classroom) {
       throw new CustomErrorClass("Classroom is not found", 404);
     }

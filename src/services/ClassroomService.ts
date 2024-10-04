@@ -33,7 +33,7 @@ class ClassroomService {
   }
 
   async fetchClassroom(id: string) {
-    const classroom = await this.classroomRepository.findById(id as any);
+    const classroom = await this.classroomRepository.classroomFindById(id as any);
     if (!classroom) {
       throw new CustomErrorClass("Such classroom not found", 404);
     }
@@ -41,7 +41,7 @@ class ClassroomService {
   }
 
   async isLocked(classroomId: string, studentId: string) {
-    const classroom = await this.classroomRepository.findById(classroomId as any);
+    const classroom = await this.classroomRepository.classroomFindById(classroomId as any);
     if (!classroom) {
       throw new CustomErrorClass("Such classroom not found", 404);
     }
@@ -134,7 +134,7 @@ class ClassroomService {
       let { classroomid, studentid } = data;
       const firstChar = classroomid.slice(0, 1);
       if (firstChar !== "#" && firstChar) {
-        const classroom = await this.classroomRepository.findById(classroomid as any);
+        const classroom = await this.classroomRepository.classroomFindById(classroomid as any);
         if (!classroom) {
           throw new CustomErrorClass('Classroom not found.', 404);
         }

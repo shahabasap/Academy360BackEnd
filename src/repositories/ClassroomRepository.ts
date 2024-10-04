@@ -4,8 +4,13 @@ import Student from '../models/Student';
 import { CustomErrorClass,CustomError } from '../types/CustomError';
 import { IClassroom, StudentData,ClassCreating,PaginatedResult} from '../types/CommonTypes';
 import IClassroomRepository from '../interfaces/repository/IclassroomRepo';
+import { BaseRepository } from './baseRepository';
 
-class ClassroomRepository implements IClassroomRepository{
+
+class ClassroomRepository extends BaseRepository<IClassroom> implements IClassroomRepository{
+  constructor() {
+    super(Classroom); // Pass the Classroom model to the BaseRepository constructor
+  }
   async createClassroom(data: ClassCreating): Promise<IClassroom> {
     const { subject, teacherid } = data;
     const trimmedSubject = subject.trim();
@@ -26,7 +31,7 @@ class ClassroomRepository implements IClassroomRepository{
     const classrooms = await Classroom.find({ teacherid: teacherid }).exec();
     return classrooms;
   }
-  async findById(id: mongoose.Types.ObjectId): Promise<IClassroom|null> {
+  async classroomFindById(id: mongoose.Types.ObjectId): Promise<IClassroom|null> {
     const classrooms = await Classroom.findOne({_id:id }).populate('teacherid').populate('students.studentid').exec();
     return classrooms;
   }
